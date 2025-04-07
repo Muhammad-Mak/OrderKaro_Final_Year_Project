@@ -31,7 +31,7 @@ namespace FYP_Backend.Controllers
                 return NotFound("Order not found.");
 
             // Calculate total amount in cents
-            var amount = (int)(order.TotalAmount * 100); // e.g., $20.50 becomes 2050
+            var amount = (int)(order.TotalAmount * 100); // e.g., PKR 20.50 becomes 2050
 
             var options = new PaymentIntentCreateOptions
             {
