@@ -38,6 +38,7 @@ namespace FYP_Backend.Mapping
             // User Mappings
             CreateMap<User, UserDTO>();
             CreateMap<RegisterDTO, User>();
+            CreateMap<UpdateUserDTO, User>();
 
 
         }
