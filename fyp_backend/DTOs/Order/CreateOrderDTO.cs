@@ -2,10 +2,11 @@
 {
     public class CreateOrderDTO
     {
-        public int UserId { get; set; } // From logged-in user or mobile
+        public int UserId { get; set; }
         public string OrderType { get; set; } = null!;
-        public int? TableNumber { get; set; } // nullable if OrderType is Pickup
-        public List<CreateOrderItemDTO> OrderItems { get; set; } = new();
+        public string? DeliveryLocation { get; set; } // now nullable
         public string PaymentIntentId { get; set; } = null!;
+        public DateTime? ScheduledTime { get; set; }
+        public List<CreateOrderItemDTO> OrderItems { get; set; } = new();
     }
 }

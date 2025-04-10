@@ -54,6 +54,16 @@ namespace FYP_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderDTO>> CreateOrder(CreateOrderDTO dto)
         {
+            if (dto.ScheduledTime != null && dto.ScheduledTime < DateTime.UtcNow)
+            {
+                return BadRequest("Scheduled time must be in the future.");
+            }
+
+            if (dto.OrderType == "Delivery" && string.IsNullOrWhiteSpace(dto.DeliveryLocation))
+            {
+                return BadRequest("Please provide a valid delivery location for delivery orders.");
+            }
+
             var order = _mapper.Map<Order>(dto);
             order.OrderNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
             order.Status = "Pending";
@@ -62,7 +72,6 @@ namespace FYP_Backend.Controllers
             order.CreatedAt = DateTime.UtcNow;
             order.UpdatedAt = DateTime.UtcNow;
 
-            // Calculate totals and link menu item pricing
             foreach (var item in order.OrderItems!)
             {
                 var menuItem = await _context.MenuItems.FindAsync(item.MenuItemId);
