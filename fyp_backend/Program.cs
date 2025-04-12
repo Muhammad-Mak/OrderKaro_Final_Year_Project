@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Smart Cafe API", Version = "v1" });
 
-    // 🔐 Add JWT Bearer authentication config
+    //  Add JWT Bearer authentication config
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

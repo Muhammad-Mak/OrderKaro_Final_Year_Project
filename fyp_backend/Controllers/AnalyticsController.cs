@@ -5,26 +5,36 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FYP_Backend.Controllers
 {
+    // Marks this class as an API controller
     [ApiController]
+    // Route for this controller will be: api/analytics
     [Route("api/[controller]")]
     public class AnalyticsController : ControllerBase
     {
+        // Database context to access the database
         private readonly AppDbContext _context;
 
+        // Constructor to inject the AppDbContext
         public AnalyticsController(AppDbContext context)
         {
             _context = context;
         }
 
+        // Only accessible to users with the "Admin" role
         [Authorize(Roles = "Admin")]
+        // GET: api/analytics/totals
         [HttpGet("totals")]
         public async Task<IActionResult> GetTotals()
         {
+            // Count total number of orders in the system
             var totalOrders = await _context.Orders.CountAsync();
+
+            // Calculate the sum of total amounts for all completed orders
             var totalRevenue = await _context.Orders
                 .Where(o => o.Status == "Completed")
                 .SumAsync(o => o.TotalAmount);
 
+            // Return the totals as a JSON object
             return Ok(new
             {
                 TotalOrders = totalOrders,
@@ -32,16 +42,20 @@ namespace FYP_Backend.Controllers
             });
         }
 
+        // Only accessible to Admin users
         [Authorize(Roles = "Admin")]
+        // GET: api/analytics/popular-items
         [HttpGet("popular-items")]
         public async Task<IActionResult> GetTopOrderedItems()
         {
+            // Get top 6 menu items based on OrderCount in descending order
             var topItems = await _context.MenuItems
                 .OrderByDescending(m => m.OrderCount)
                 .Take(6)
-                .Select(m => new { m.Name, m.OrderCount })
+                .Select(m => new { m.Name, m.OrderCount }) // Select only relevant fields
                 .ToListAsync();
 
+            // Return the list of top items
             return Ok(topItems);
         }
     }
