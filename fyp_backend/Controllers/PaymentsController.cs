@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using FYP_Backend.Context;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FYP_Backend.Controllers
 {
@@ -92,5 +93,33 @@ namespace FYP_Backend.Controllers
                 paymentStatus = order.PaymentStatus
             });
         }
+
+        [Authorize(Roles = "Customer")]
+        [HttpPost("pay-with-balance")]
+        public async Task<IActionResult> PayWithBalance(int orderId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null) return NotFound("Order not found.");
+            if (order.User.Balance < order.TotalAmount)
+                return BadRequest("Insufficient balance.");
+
+            order.User.Balance -= order.TotalAmount;
+            order.PaymentStatus = "Succeeded";
+            order.Status = "Completed";
+            order.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                status = order.Status,
+                paymentStatus = order.PaymentStatus,
+                newBalance = order.User.Balance
+            });
+        }
+
     }
 }

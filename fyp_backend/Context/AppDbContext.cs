@@ -54,6 +54,8 @@ namespace FYP_Backend.Context
                 entity.Property(e => e.FirstName).HasMaxLength(50);
                 entity.Property(e => e.LastName).HasMaxLength(50);
                 entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+                entity.Property(e => e.StudentId).IsRequired(false);
+                entity.HasIndex(e => e.StudentId).IsUnique();
             });
 
             // Order Entity Configuration

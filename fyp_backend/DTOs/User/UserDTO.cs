@@ -8,5 +8,7 @@
         public string LastName { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
         public string Role { get; set; } = null!;
+        public string? StudentId { get; set; } = null!;
+        public decimal Balance { get; set; }
     }
 }

@@ -63,6 +63,20 @@ namespace FYP_Backend.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin, Staff")]
+        [HttpPost("topup")]
+        public async Task<IActionResult> TopUpBalance(string studentId, decimal amount)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.StudentId == studentId);
+            if (user == null) return NotFound("Student not found.");
+
+            user.Balance += amount;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { user.Balance });
+        }
+
 
 
     }

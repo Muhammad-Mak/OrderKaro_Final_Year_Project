@@ -8,6 +8,8 @@ public class User
     public string LastName { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public string Role { get; set; } = "Customer";
+    public string? StudentId { get; set; } = null!;
+    public decimal Balance { get; set; } = 0; // Default balance is 0
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

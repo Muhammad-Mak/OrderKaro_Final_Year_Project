@@ -54,9 +54,14 @@ namespace FYP_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderDTO>> CreateOrder(CreateOrderDTO dto)
         {
-            if (dto.ScheduledTime != null && dto.ScheduledTime < DateTime.UtcNow)
+            // Handle scheduled time logic
+            if (dto.ScheduledTime == null)
             {
-                return BadRequest("Scheduled time must be in the future.");
+                dto.ScheduledTime = DateTime.UtcNow;
+            }
+            else if (dto.ScheduledTime < DateTime.UtcNow.AddMinutes(-1))
+            {
+                return BadRequest("Scheduled time must be now or in the future.");
             }
 
             if (dto.OrderType == "Delivery" && string.IsNullOrWhiteSpace(dto.DeliveryLocation))
@@ -71,6 +76,7 @@ namespace FYP_Backend.Controllers
             order.OrderDate = DateTime.UtcNow;
             order.CreatedAt = DateTime.UtcNow;
             order.UpdatedAt = DateTime.UtcNow;
+            order.ScheduledTime = dto.ScheduledTime;
 
             foreach (var item in order.OrderItems!)
             {
