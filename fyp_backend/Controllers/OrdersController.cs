@@ -94,6 +94,7 @@ namespace FYP_Backend.Controllers
                 item.UnitPrice = menuItem.Price;                  // Get price from menu item
                 item.SubTotal = item.UnitPrice * item.Quantity;   // Calculate subtotal for item
                 order.TotalAmount += item.SubTotal;               // Add to total amount
+                menuItem.OrderCount += item.Quantity;           // Update menu item order count
                 item.CreatedAt = DateTime.UtcNow;                 // Timestamp
             }
 
