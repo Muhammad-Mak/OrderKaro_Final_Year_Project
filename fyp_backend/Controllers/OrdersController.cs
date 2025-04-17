@@ -23,7 +23,7 @@ namespace FYP_Backend.Controllers
 
         // GET: api/orders/user/5
         // Returns all orders for a specific user
-        [Authorize(Roles = "Customer")] // Only accessible to users with the "Customer" role
+        [Authorize(Roles = "Customer, Staff, Admin")] 
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrdersForUser(int userId)
         {
@@ -39,6 +39,7 @@ namespace FYP_Backend.Controllers
 
         // GET: api/orders/5
         // Returns a specific order by its ID
+        [Authorize(Roles = "Customer, Staff, Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderDTO>> GetOrder(int id)
         {
@@ -54,6 +55,7 @@ namespace FYP_Backend.Controllers
 
         // POST: api/orders
         // Creates a new order from a CreateOrderDTO
+        [Authorize(Roles = "Customer, Staff, Admin")]
         [HttpPost]
         public async Task<ActionResult<OrderDTO>> CreateOrder(CreateOrderDTO dto)
         {

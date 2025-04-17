@@ -24,6 +24,7 @@ namespace FYP_Backend.Controllers
 
         // POST: api/payments/create-payment-intent
         // Creates a Stripe payment intent for a given order
+        [Authorize(Roles = "Customer, Staff, Admin")]
         [HttpPost("create-payment-intent")]
         public async Task<IActionResult> CreatePaymentIntent(int orderId)
         {
@@ -68,6 +69,7 @@ namespace FYP_Backend.Controllers
 
         // POST: api/payments/confirm
         // Confirms payment after Stripe processes it (simulated; in real life, use webhooks)
+        [Authorize(Roles = "Customer, Staff, Admin")]
         [HttpPost("confirm")]
         public async Task<IActionResult> ConfirmPayment(string paymentIntentId)
         {
@@ -107,7 +109,7 @@ namespace FYP_Backend.Controllers
 
         // POST: api/payments/pay-with-balance
         // Processes payment using the customer's RFID card balance
-        [Authorize(Roles = "Customer")] // Only logged-in customers can access this
+        [Authorize(Roles = "Customer, Staff, Admin")]
         [HttpPost("pay-with-balance")]
         public async Task<IActionResult> PayWithBalance(int orderId)
         {

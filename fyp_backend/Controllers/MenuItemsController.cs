@@ -25,7 +25,7 @@ namespace FYP_Backend.Controllers
 
         // GET: api/menuitems
         // Returns all menu items including their category information
-        [Authorize(Roles = "Admin, Staff")] // Access restricted to Admin and Staff roles
+        [Authorize(Roles = "Admin, Staff, Customer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItems()
         {
@@ -39,7 +39,7 @@ namespace FYP_Backend.Controllers
 
         // GET: api/menuitems/5
         // Returns a specific menu item by ID
-        [Authorize(Roles = "Admin, Staff")]
+        [Authorize(Roles = "Admin, Staff, Customer")]
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuItemDTO>> GetMenuItem(int id)
         {
@@ -103,5 +103,19 @@ namespace FYP_Backend.Controllers
             await _context.SaveChangesAsync();
             return NoContent(); // Return 204
         }
+
+        // GET: api/menuitems/by-category/{categoryId}
+        [Authorize(Roles = "Admin, Staff, Customer")]
+        [HttpGet("by-category/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItemsByCategory(int categoryId)
+        {
+            var items = await _context.MenuItems
+                .Include(m => m.Category)
+                .Where(m => m.CategoryId == categoryId && m.IsAvailable)
+                .ToListAsync();
+
+            return Ok(_mapper.Map<List<MenuItemDTO>>(items));
+        }
+
     }
 }

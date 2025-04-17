@@ -43,7 +43,7 @@ namespace FYP_Backend.Controllers
         }
 
         // Only accessible to Admin users
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Customer, Staff")]
         // GET: api/analytics/popular-items
         [HttpGet("popular-items")]
         public async Task<IActionResult> GetTopOrderedItems()
