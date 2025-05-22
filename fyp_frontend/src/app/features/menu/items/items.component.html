@@ -1,0 +1,33 @@
+<h2>Menu Items</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <input formControlName="name" placeholder="Item Name" required>
+  <input formControlName="description" placeholder="Description">
+  <input formControlName="price" type="number" placeholder="Price">
+  <input formControlName="imageUrl" placeholder="Image URL">
+  <select formControlName="categoryId">
+    <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.name }}</option>
+  </select>
+  <label>
+    <input type="checkbox" formControlName="isAvailable"> Available
+  </label>
+  <button type="submit">{{ editingId ? 'Update' : 'Add' }}</button>
+  <button type="button" (click)="cancel()" *ngIf="editingId">Cancel</button>
+</form>
+
+<table>
+  <thead>
+    <tr><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of items">
+      <td>{{ item.name }}</td>
+      <td>{{ item.price }}</td>
+      <td>{{ item.categoryName }}</td>
+      <td>
+        <button (click)="edit(item)">Edit</button>
+        <button (click)="delete(item.menuItemId)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

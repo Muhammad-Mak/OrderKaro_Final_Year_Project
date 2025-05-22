@@ -1,0 +1,18 @@
+<h2>Top-Up Balance</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    Student ID (RFID):
+    <input formControlName="studentId" placeholder="Enter Student ID" required>
+  </label>
+
+  <label>
+    Amount:
+    <input type="number" formControlName="amount" required min="1">
+  </label>
+
+  <button type="submit">Top Up</button>
+</form>
+
+<div class="message success" *ngIf="message">{{ message }}</div>
+<div class="message error" *ngIf="error">{{ error }}</div>

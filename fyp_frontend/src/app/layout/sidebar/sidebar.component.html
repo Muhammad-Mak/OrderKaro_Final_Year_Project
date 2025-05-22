@@ -1,0 +1,17 @@
+<nav class="sidebar">
+  <ul>
+    <li *ngIf="userRole === 'Admin'">
+      <button (click)="navigateTo('/dashboard/analytics')">Analytics</button>
+    </li>
+    <li><button (click)="navigateTo('/dashboard/users')">Users</button></li>
+    <li><button (click)="navigateTo('/dashboard/orders')">All Orders</button></li>
+    <li><button (click)="navigateTo('/orders/active')">Active Orders</button></li>
+    <li><button (click)="navigateTo('/menu/items')">Menu Items</button></li>
+    <li><button (click)="navigateTo('/menu/categories')">Categories</button></li>
+    <li><button (click)="navigateTo('/top-up')">Top Up</button></li>
+  </ul>
+
+  <div class="logout">
+    <button (click)="logout()">Logout</button>
+  </div>
+</nav>

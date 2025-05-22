@@ -1,0 +1,80 @@
+<h2>Dashboard Analytics</h2>
+
+<section class="analytics-cards">
+  <div class="card">
+    <h3>Total Orders</h3>
+    <p>{{ totalOrders }}</p>
+  </div>
+  <div class="card">
+    <h3>Total Revenue</h3>
+    <p>{{ totalRevenue | currency:'PKR' }}</p>
+  </div>
+</section>
+
+<section class="top-items">
+  <h3>Top 6 Ordered Items</h3>
+  <table>
+    <thead>
+      <tr><th>Item</th><th>Order Count</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of topItems">
+        <td>{{ item.name }}</td>
+        <td>{{ item.orderCount }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="users">
+  <h3>Users</h3>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.firstName }} {{ user.lastName }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+          <button (click)="selectUser(user)">View Orders</button>
+          <button (click)="deleteUser(user.userId)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section *ngIf="selectedUser">
+  <h4>Orders by {{ selectedUser.firstName }}</h4>
+  <table>
+    <thead>
+      <tr><th>Order #</th><th>Status</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of userOrders">
+        <td>{{ order.orderNumber }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.totalAmount | currency:'PKR' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="all-orders">
+  <h3>All Orders</h3>
+  <table>
+    <thead>
+      <tr><th>Order #</th><th>User</th><th>Status</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of allOrders">
+        <td>{{ order.orderNumber }}</td>
+        <td>{{ order.user.firstName }} {{ order.user.lastName }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.totalAmount | currency:'PKR' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

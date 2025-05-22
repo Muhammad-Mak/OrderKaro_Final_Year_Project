@@ -1,0 +1,20 @@
+<h2>Admin / Staff Login</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    Email:
+    <input type="email" formControlName="email" required />
+  </label>
+
+  <label>
+    Password:
+    <input type="password" formControlName="password" required />
+  </label>
+
+  <button type="submit">Login</button>
+</form>
+
+<div class="error" *ngIf="error">{{ error }}</div>
+
+<p>Don't have an account?</p>
+<button (click)="goToRegister()">Register</button>

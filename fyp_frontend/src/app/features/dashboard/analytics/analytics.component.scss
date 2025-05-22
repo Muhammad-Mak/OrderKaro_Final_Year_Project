@@ -1,0 +1,33 @@
+.analytics-cards {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .card {
+    flex: 1;
+    background: #f3f4f6;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+
+  th, td {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+
+  th {
+    background-color: #eee;
+  }
+
+  td button {
+    margin-right: 0.5rem;
+  }
+}
