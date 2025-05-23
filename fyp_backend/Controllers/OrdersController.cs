@@ -37,6 +37,22 @@ namespace FYP_Backend.Controllers
             return Ok(_mapper.Map<List<OrderDTO>>(orders)); // Convert to DTOs and return
         }
 
+        // GET: api/orders
+        // Returns all orders in the system
+        [Authorize(Roles = "Admin, Staff")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetAllOrders()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.OrderItems!)
+                    .ThenInclude(oi => oi.MenuItem)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return Ok(_mapper.Map<List<OrderDTO>>(orders));
+        }
+
+
         // GET: api/orders/5
         // Returns a specific order by its ID
         [Authorize(Roles = "Customer, Staff, Admin")]
