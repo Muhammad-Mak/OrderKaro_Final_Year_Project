@@ -22,7 +22,8 @@ export class ActiveOrdersComponent implements OnInit {
 
   loadActiveOrders() {
     this.orderService.getAllOrders().subscribe(res => {
-      this.orders = res.filter(order => order.status !== 'Completed');
+      // ✅ Only include orders with status === 'Pending' (case-insensitive)
+      this.orders = res.filter(order => order.status?.toLowerCase() === 'pending');
     });
   }
 
@@ -31,7 +32,6 @@ export class ActiveOrdersComponent implements OnInit {
   }
 
   markCompleted(order: any) {
-    // Mark order as completed via backend
     this.http.post('/api/payments/confirm', { paymentIntentId: order.paymentIntentId })
       .subscribe(() => {
         this.orders = this.orders.filter(o => o.orderId !== order.orderId);

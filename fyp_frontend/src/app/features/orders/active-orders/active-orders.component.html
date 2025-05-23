@@ -13,7 +13,7 @@
   <tbody>
     <tr *ngFor="let order of orders">
       <td>{{ order.orderNumber }}</td>
-      <td>{{ order.user.firstName }} {{ order.user.lastName }}</td>
+      <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
       <td>{{ order.status }}</td>
       <td>
         <input type="checkbox"

@@ -71,7 +71,7 @@
     <tbody>
       <tr *ngFor="let order of allOrders">
         <td>{{ order.orderNumber }}</td>
-        <td>{{ order.user.firstName }} {{ order.user.lastName }}</td>
+        <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
         <td>{{ order.status }}</td>
         <td>{{ order.totalAmount | currency:'PKR' }}</td>
       </tr>
