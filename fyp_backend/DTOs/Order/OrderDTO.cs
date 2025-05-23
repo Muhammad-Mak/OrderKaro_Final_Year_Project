@@ -12,6 +12,8 @@
         public string PaymentIntentId { get; set; } = null!;
         public DateTime OrderDate { get; set; }
         public DateTime? ScheduledTime { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public List<OrderItemDTO> OrderItems { get; set; } = new();
     }
 }

@@ -29,6 +29,7 @@ namespace FYP_Backend.Controllers
         {
             var orders = await _context.Orders
                 .Where(o => o.UserId == userId)
+                .Include(o => o.User)               // Include user details
                 .Include(o => o.OrderItems!)               // Include order items
                     .ThenInclude(oi => oi.MenuItem)        // Include associated menu items
                 .OrderByDescending(o => o.OrderDate)       // Latest orders first
@@ -44,6 +45,7 @@ namespace FYP_Backend.Controllers
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetAllOrders()
         {
             var orders = await _context.Orders
+                .Include(o => o.User)               // Include user details
                 .Include(o => o.OrderItems!)
                     .ThenInclude(oi => oi.MenuItem)
                 .OrderByDescending(o => o.OrderDate)
