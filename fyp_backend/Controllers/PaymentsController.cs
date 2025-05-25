@@ -88,7 +88,7 @@ namespace FYP_Backend.Controllers
             if (intent.Status == "succeeded")
             {
                 order.PaymentStatus = "Succeeded";
-                order.Status = "Completed";
+                order.Status = "Pending";
             }
             else
             {
@@ -123,12 +123,15 @@ namespace FYP_Backend.Controllers
 
             // Check if user's balance is enough to cover the order
             if (order.User.Balance < order.TotalAmount)
+            {
+                order.PaymentStatus = "Failed"; // Mark payment as failed
+                order.Status = "Cancelled"; // Mark order as cancelled
                 return BadRequest("Insufficient balance.");
-
+            }
             // Deduct balance and mark order as paid
             order.User.Balance -= order.TotalAmount;
             order.PaymentStatus = "Succeeded";
-            order.Status = "Completed";
+            order.Status = "Pending";
             order.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();

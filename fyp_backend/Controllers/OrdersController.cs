@@ -131,5 +131,38 @@ namespace FYP_Backend.Controllers
             // Return 201 Created with route to GetOrder
             return CreatedAtAction(nameof(GetOrder), new { id = order.OrderId }, _mapper.Map<OrderDTO>(result));
         }
+
+        [Authorize(Roles = "Staff, Admin")]
+        // GET: api/orders/active
+        [HttpGet("active")]
+        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetActiveOrders()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems!)
+                    .ThenInclude(oi => oi.MenuItem)
+                .Where(o => o.Status == "Pending" && o.PaymentStatus == "Succeeded")
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return Ok(_mapper.Map<List<OrderDTO>>(orders));
+        }
+        // PUT: api/orders/{id}/complete
+        [Authorize(Roles = "Staff, Admin")]
+        [HttpPut("{id}/complete")]
+        public async Task<IActionResult> MarkOrderAsCompleted(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return NotFound();
+
+            if (order.Status != "Pending" || order.PaymentStatus != "Succeeded")
+                return BadRequest("Only paid and pending orders can be marked as completed.");
+
+            order.Status = "Completed";
+            order.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Order marked as completed." });
+        }
     }
 }

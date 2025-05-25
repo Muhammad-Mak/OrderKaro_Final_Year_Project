@@ -58,5 +58,38 @@ namespace FYP_Backend.Controllers
             // Return the list of top items
             return Ok(topItems);
         }
+        [Authorize(Roles = "Admin")]
+        // GET: api/analytics/orders-per-week
+        [HttpGet("orders-per-week")]
+        public async Task<IActionResult> GetOrdersPerWeek()
+        {
+            var startDate = DateTime.UtcNow.Date.AddDays(-6);
+            var endDate = DateTime.UtcNow.Date.AddDays(1);
+
+            var data = await _context.Orders
+                .Where(o => o.OrderDate >= startDate && o.OrderDate < endDate)
+                .GroupBy(o => o.OrderDate.Date)
+                .Select(g => new {
+                    Date = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            return Ok(data);
+        }
+        [Authorize(Roles = "Admin")]
+        // GET: api/analytics/order-type-ratio
+        [HttpGet("order-type-ratio")]
+        public async Task<IActionResult> GetOrderTypeRatio()
+        {
+            var pickupCount = await _context.Orders.CountAsync(o => o.OrderType == "Pickup");
+            var deliveryCount = await _context.Orders.CountAsync(o => o.OrderType == "Delivery");
+
+            return Ok(new
+            {
+                Pickup = pickupCount,
+                Delivery = deliveryCount
+            });
+        }
     }
 }
