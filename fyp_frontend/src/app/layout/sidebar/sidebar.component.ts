@@ -20,6 +20,10 @@ export class SidebarComponent {
   navigateTo(path: string) {
     this.router.navigate([path]);
   }
+  
+  isActive(path: string): boolean {
+    return this.router.url === path;
+  }
 
   logout() {
     this.auth.logout();
