@@ -1,20 +1,45 @@
-<h2>Admin / Staff Login</h2>
+<div class="outer">
+  <div class="container">
+    <div class="row">
+      <div class="offset-md-2 col-lg-5 col-md-7 offset-lg-4 offset-md-3">
+        <div class="panel border bg-white">
+          <div class="panel-heading">
+            <h3 class="pt-3 font-weight-bold">Staff And Admin Login Only</h3>
+          </div>
+          <div class="panel-body p-3">
+            <form [formGroup]="form" (ngSubmit)="submit()">
 
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <label>
-    Email:
-    <input type="email" formControlName="email" required />
-  </label>
+              <div class="form-group pt-3">
+                <div class="input-field">
+                  <span class="fa fa-envelope p-2"></span>
+                  <input type="email" formControlName="email" placeholder="Email" />
+                </div>
+              </div>
+              <small *ngIf="form.controls['email'].invalid && form.controls['email'].touched" class="text-danger">*
+                Email is required</small>
 
-  <label>
-    Password:
-    <input type="password" formControlName="password" required />
-  </label>
+              <div class="form-group pt-3">
+                <div class="input-field">
+                  <span class="fa fa-lock p-2"></span>
+                  <input type="password" formControlName="password" placeholder="Password" />
+                </div>
+              </div>
+              <small *ngIf="form.controls['password'].invalid && form.controls['password'].touched"
+                class="text-danger">* Password is required</small>
 
-  <button type="submit">Login</button>
-</form>
+             
 
-<div class="error" *ngIf="error">{{ error }}</div>
+              <button type="submit" class="btn btn-block mt-4 w-100">Login</button>
 
-<p>Don't have an account?</p>
-<button (click)="goToRegister()">Register</button>
+              <div class="text-center pt-4 text-muted">
+                Already Have An Account?
+                <button class="btn-link" (click)="goToRegister()" type="button">Register</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

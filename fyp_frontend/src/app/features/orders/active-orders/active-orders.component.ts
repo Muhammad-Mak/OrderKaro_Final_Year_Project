@@ -22,7 +22,7 @@ export class ActiveOrdersComponent implements OnInit {
 
   loadActiveOrders() {
     this.orderService.getAllOrders().subscribe(res => {
-      // ✅ Only include orders with status === 'Pending' (case-insensitive)
+      // Only include orders with status === Pending
       this.orders = res.filter(order => order.status?.toLowerCase() === 'pending');
     });
   }

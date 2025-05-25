@@ -34,12 +34,36 @@
     </thead>
     <tbody>
       <tr *ngFor="let user of users">
-        <td>{{ user.firstName }} {{ user.lastName }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role }}</td>
         <td>
-          <button (click)="selectUser(user)">View Orders</button>
-          <button (click)="deleteUser(user.userId)">Delete</button>
+          <div *ngIf="editUser?.userId !== user.userId">{{ user.firstName }} {{ user.lastName }}</div>
+          <div *ngIf="editUser?.userId === user.userId">
+            <input [(ngModel)]="editUser.firstName" placeholder="First" />
+            <input [(ngModel)]="editUser.lastName" placeholder="Last" />
+          </div>
+        </td>
+        <td>
+          {{ user.email }}
+        </td>
+        <td>
+          <div *ngIf="editUser?.userId !== user.userId">{{ user.role }}</div>
+          <div *ngIf="editUser?.userId === user.userId">
+            <select [(ngModel)]="editUser.role">
+              <option value="Customer">Customer</option>
+              <option value="Admin">Admin</option>
+              <option value="Staff">Staff</option>
+            </select>
+          </div>
+        </td>
+        <td>
+          <div *ngIf="editUser?.userId !== user.userId">
+            <button (click)="selectUser(user)">View Orders</button>
+            <button (click)="edit(user)">Edit</button>
+            <button (click)="confirmDelete(user)">Delete</button>
+          </div>
+          <div *ngIf="editUser?.userId === user.userId">
+            <button (click)="saveEdit()">Save</button>
+            <button (click)="cancelEdit()">Cancel</button>
+          </div>
         </td>
       </tr>
     </tbody>

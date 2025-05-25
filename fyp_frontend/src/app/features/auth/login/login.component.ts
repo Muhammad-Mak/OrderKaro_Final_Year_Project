@@ -35,7 +35,13 @@ export class LoginComponent {
         }
 
         this.auth.saveAuthData(res.token, res.user);
-        this.router.navigate(['/dashboard/analytics']);
+
+        if (res.user.role === 'Admin') {
+          this.router.navigate(['/dashboard/analytics']);
+        } else if (res.user.role === 'Staff') {
+          this.router.navigate(['/orders/active']); // Or whichever staff route you allow
+        }
+
       },
       error: () => {
         this.error = 'Invalid email or password.';
@@ -44,7 +50,7 @@ export class LoginComponent {
   }
 
   goToRegister() {
-  this.router.navigate(['/register']);
+    this.router.navigate(['/register']);
   }
 
 }

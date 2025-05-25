@@ -1,37 +1,76 @@
-<h2>Register</h2>
+<div class="outer">
+  <div class="container">
+    <div class="row">
+      <div class="offset-md-2 col-lg-5 col-md-7 offset-lg-4 offset-md-3">
+        <div class="panel border bg-white">
+          <div class="panel-heading">
+            <h3 class="pt-3 font-weight-bold">Register</h3>
+          </div>
+          <div class="panel-body p-3">
+            <form [formGroup]="form" (ngSubmit)="submit()">
+              <div class="form-group pt-3">
+                <div class="input-field">
+                  <span class="fa fa-user p-2"></span>
+                  <input type="text" formControlName="firstName" placeholder="First Name" />
+                </div>
+              </div>
+              <small *ngIf="form.controls['firstName'].invalid && form.controls['firstName'].touched"
+                class="text-danger">* First name is required</small>
 
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <label>
-    First Name:
-    <input type="text" formControlName="firstName" required />
-  </label>
+              <div class="form-group pt-3">
+                <div class="input-field">
+                  <span class="fa fa-user p-2"></span>
+                  <input type="text" formControlName="lastName" placeholder="Last Name" />
+                </div>
+              </div>
+              <small *ngIf="form.controls['lastName'].invalid && form.controls['lastName'].touched"
+                class="text-danger">* Last name is required</small>
 
-  <label>
-    Last Name:
-    <input type="text" formControlName="lastName" required />
-  </label>
+              <div class="form-group pt-3">
+                <div class="input-field">
+                  <span class="fa fa-phone p-2"></span>
+                  <input type="text" formControlName="phoneNumber" placeholder="Phone Number" />
+                </div>
+              </div>
+              <small *ngIf="form.controls['phoneNumber'].invalid && form.controls['phoneNumber'].touched"
+                class="text-danger">* Phone number is required</small>
 
-  <label>
-    Phone Number:
-    <input type="text" formControlName="phoneNumber" required />
-  </label>
+              <div class="form-group pt-3">
+                <div class="input-field">
+                  <span class="fa fa-envelope p-2"></span>
+                  <input type="email" formControlName="email" placeholder="Email" />
+                </div>
+              </div>
+              <small *ngIf="form.controls['email'].invalid && form.controls['email'].touched" class="text-danger">*
+                Email is required</small>
 
-  <label>
-    Email:
-    <input type="email" formControlName="email" required />
-  </label>
+              <div class="form-group pt-3">
+                <div class="input-field">
+                  <span class="fa fa-lock p-2"></span>
+                  <input type="password" formControlName="password" placeholder="Password" />
+                </div>
+              </div>
+              <small *ngIf="form.controls['password'].invalid && form.controls['password'].touched"
+                class="text-danger">* Password is required</small>
 
-  <label>
-    Password:
-    <input type="password" formControlName="password" required />
-  </label>
+              <div class="form-group pt-3">
+                <div class="input-field">
+                  <span class="fa fa-id-card p-2"></span>
+                  <input type="text" formControlName="studentId" placeholder="Student ID (optional)" />
+                </div>
+              </div>
 
-  <label>
-    Student ID (optional):
-    <input type="text" formControlName="studentId" />
-  </label>
+              <button type="submit" class="btn btn-block mt-4 w-100">Register</button>
 
-  <button type="submit">Register</button>
-</form>
-<p>Already have an account?</p>
-<button (click)="goToLogin()">Login</button>
+              <div class="text-center pt-4 text-muted">
+                Already Have An Account?
+                <button class="btn-link" (click)="goToLogin()" type="button">Login</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
