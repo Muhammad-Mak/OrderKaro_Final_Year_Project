@@ -13,4 +13,12 @@ export class OrderService {
   getAllOrders() {
     return this.http.get<any[]>(`${appSettings.apiBaseUrl}/orders`);
   }
+
+  getActiveOrders() {
+    return this.http.get<any[]>(`${appSettings.apiBaseUrl}/orders/active`);
+  }
+
+  markAsCompleted(orderId: number) {
+    return this.http.put(`${appSettings.apiBaseUrl}/orders/${orderId}/complete`, {});
+  }
 }

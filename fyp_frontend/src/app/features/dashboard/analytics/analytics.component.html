@@ -1,31 +1,54 @@
 <h2>Dashboard Analytics</h2>
 
-<section class="analytics-cards">
-  <div class="card">
+<!-- TOP CARDS -->
+<section class="stats-row">
+  <div class="card metric-card">
+    <h3>Total Users</h3>
+    <p>{{ totalUsers }}</p>
+  </div>
+  <div class="card metric-card">
     <h3>Total Orders</h3>
     <p>{{ totalOrders }}</p>
   </div>
-  <div class="card">
+  <div class="card metric-card">
     <h3>Total Revenue</h3>
     <p>{{ totalRevenue | currency:'PKR' }}</p>
   </div>
 </section>
 
-<section class="top-items">
-  <h3>Top 6 Ordered Items</h3>
-  <table>
-    <thead>
-      <tr><th>Item</th><th>Order Count</th></tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of topItems">
-        <td>{{ item.name }}</td>
-        <td>{{ item.orderCount }}</td>
-      </tr>
-    </tbody>
-  </table>
+<!-- ORDERS THIS WEEK GRAPH -->
+<section class="graph-section">
+  <div class="card graph-card">
+    <h3>Orders This Week</h3>
+    <canvas baseChart
+      [data]="ordersWeekData"
+      [options]="lineChartOptions"
+      [type]="'line'">
+    </canvas>
+  </div>
 </section>
 
+<!-- BAR & PIE SIDE BY SIDE -->
+<section class="side-by-side-charts">
+  <div class="card side-chart">
+    <h3>Top 6 Ordered Items</h3>
+    <canvas baseChart
+      [data]="topItemsData"
+      [options]="barChartOptions"
+      [type]="'bar'">
+    </canvas>
+  </div>
+  <div class="card side-chart">
+    <h3>Pickup vs Delivery</h3>
+    <canvas baseChart
+      [data]="orderTypeData"
+      [options]="pieChartOptions"
+      [type]="'pie'">
+    </canvas>
+  </div>
+</section>
+
+<!-- USERS TABLE -->
 <section class="users">
   <h3>Users</h3>
   <table>
@@ -41,9 +64,7 @@
             <input [(ngModel)]="editUser.lastName" placeholder="Last" />
           </div>
         </td>
-        <td>
-          {{ user.email }}
-        </td>
+        <td>{{ user.email }}</td>
         <td>
           <div *ngIf="editUser?.userId !== user.userId">{{ user.role }}</div>
           <div *ngIf="editUser?.userId === user.userId">
@@ -70,6 +91,7 @@
   </table>
 </section>
 
+<!-- USER ORDERS -->
 <section *ngIf="selectedUser">
   <h4>Orders by {{ selectedUser.firstName }}</h4>
   <table>
@@ -86,6 +108,7 @@
   </table>
 </section>
 
+<!-- ALL ORDERS -->
 <section class="all-orders">
   <h3>All Orders</h3>
   <table>

@@ -1,14 +1,61 @@
-.analytics-cards {
+.stats-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  .metric-card {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    text-align: center;
+
+    h3 {
+      font-size: 1rem;
+      color: #444;
+    }
+
+    p {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin: 0.5rem 0 0;
+    }
+  }
+}
+
+.graph-section {
+  margin-bottom: 2rem;
+
+  .graph-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    height: 300px;
+  }
+}
+
+.side-by-side-charts {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
 
-  .card {
+  .side-chart {
     flex: 1;
-    background: #f3f4f6;
+    background: white;
     padding: 1rem;
     border-radius: 8px;
-    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    canvas {
+      max-height: 240px;
+      object-fit: contain;
+    }
   }
 }
 

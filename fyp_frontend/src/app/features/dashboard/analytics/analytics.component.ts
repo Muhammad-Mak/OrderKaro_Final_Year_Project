@@ -6,15 +6,18 @@ import { UserService } from '../../../core/services/user.service';
 import { OrderService } from '../../../core/services/order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartData, ChartConfiguration } from 'chart.js';
 
 @Component({
   selector: 'app-analytics',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BaseChartDirective],
   templateUrl: './analytics.component.html',
   styleUrls: ['./analytics.component.scss']
 })
 export class AnalyticsComponent implements OnInit {
+  totalUsers: number = 0;
   totalOrders: number = 0;
   totalRevenue: number = 0;
   topItems: any[] = [];
@@ -23,8 +26,28 @@ export class AnalyticsComponent implements OnInit {
   selectedUser: any = null;
   userOrders: any[] = [];
   allOrders: any[] = [];
-
   editUser: any = null;
+
+  // Chart Data
+  ordersWeekData: ChartData<'line'> = { labels: [], datasets: [] };
+  topItemsData: ChartData<'bar'> = { labels: [], datasets: [] };
+  orderTypeData: ChartData<'pie'> = { labels: ['Pickup', 'Delivery'], datasets: [] };
+
+  // Chart Options
+  lineChartOptions: ChartConfiguration<'line'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false
+  };
+
+  barChartOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false
+  };
+
+  pieChartOptions: ChartConfiguration<'pie'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false
+  };
 
   constructor(
     private analyticsService: AnalyticsService,
@@ -52,8 +75,45 @@ export class AnalyticsComponent implements OnInit {
       this.totalRevenue = res.totalRevenue;
     });
 
+    this.analyticsService.getUserCount().subscribe(res => {
+      this.totalUsers = res.totalUsers;
+    });
+
     this.analyticsService.getTopItems().subscribe(res => {
       this.topItems = res;
+
+      this.topItemsData = {
+        labels: res.map((item: any) => item.name),
+        datasets: [{
+          data: res.map((item: any) => item.orderCount),
+          label: 'Orders',
+          backgroundColor: '#1e88e5'
+        }]
+      };
+    });
+
+    this.analyticsService.getOrdersPerWeek().subscribe(res => {
+      this.ordersWeekData = {
+        labels: res.map((r: any) => r.date),
+        datasets: [{
+          data: res.map((r: any) => r.count),
+          label: 'Orders',
+          fill: true,
+          tension: 0.4,
+          borderColor: '#1e88e5',
+          backgroundColor: 'rgba(30, 136, 229, 0.2)'
+        }]
+      };
+    });
+
+    this.analyticsService.getOrderTypeRatio().subscribe(res => {
+      this.orderTypeData = {
+        labels: ['Pickup', 'Delivery'],
+        datasets: [{
+          data: [res.pickup, res.delivery],
+          backgroundColor: ['#42a5f5', '#66bb6a']
+        }]
+      };
     });
   }
 

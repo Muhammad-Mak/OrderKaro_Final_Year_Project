@@ -13,4 +13,16 @@ export class AnalyticsService {
   getTopItems() {
     return this.http.get<any[]>(`${appSettings.apiBaseUrl}/analytics/popular-items`);
   }
+
+  getUserCount() {
+    return this.http.get<any>(`${appSettings.apiBaseUrl}/users/count`);
+  }
+
+  getOrdersPerWeek() {
+    return this.http.get<any[]>(`${appSettings.apiBaseUrl}/analytics/orders-per-week`);
+  }
+
+  getOrderTypeRatio() {
+    return this.http.get<any>(`${appSettings.apiBaseUrl}/analytics/order-type-ratio`);
+  }
 }

@@ -4,10 +4,12 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
 import { jwtInterceptor } from './app/core/interceptors/jwt.interceptor';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptors([jwtInterceptor]))
+    provideHttpClient(withInterceptors([jwtInterceptor])),
+    provideCharts(withDefaultRegisterables())
   ]
 }).catch(err => console.error(err));
