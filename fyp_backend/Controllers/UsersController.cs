@@ -89,5 +89,15 @@ namespace FYP_Backend.Controllers
 
             return Ok(new { user.Balance });      // Return new balance
         }
+        // GET: api/users/count
+        // Returns the total number of users
+        [Authorize(Roles = "Admin")]
+        [HttpGet("count")]
+        public async Task<IActionResult> GetUserCount()
+        {
+            var totalUsers = await _context.Users.CountAsync();
+            return Ok(new { totalUsers });
+        }
+
     }
 }
