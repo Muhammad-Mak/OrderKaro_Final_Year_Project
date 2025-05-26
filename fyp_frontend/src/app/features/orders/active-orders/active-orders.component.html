@@ -2,11 +2,7 @@
   <h3>Active Orders</h3>
 
   <div class="table-search">
-    <input
-      type="text"
-      [(ngModel)]="searchOrderQuery"
-      placeholder="Search by order #, user or status..."
-    />
+    <input type="text" [(ngModel)]="searchOrderQuery" placeholder="Search by order #, user or status..." />
   </div>
 
   <table>
@@ -20,26 +16,33 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order of filteredOrders()">
-        <td>{{ order.orderNumber }}</td>
-        <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
-        <td>{{ order.status }}</td>
-        <td>
-          <input
-            type="checkbox"
-            [checked]="preparedMap[order.orderId]"
-            (change)="togglePrepared(order.orderId)"
-          />
-        </td>
-        <td>
-          <input
-            type="checkbox"
-            [checked]="order.status === 'Completed'"
-            [disabled]="order.status === 'Completed'"
-            (change)="markCompleted(order)"
-          />
-        </td>
-      </tr>
+      <ng-container *ngFor="let order of filteredOrders(); let i = index">
+        <tr (click)="toggleExpand(order.orderId)" style="cursor: pointer;">
+          <td>{{ order.orderNumber }}</td>
+          <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
+          <td>{{ order.status }}</td>
+          <td>
+            <input type="checkbox" [checked]="preparedMap[order.orderId]" (click)="$event.stopPropagation()"
+              (change)="togglePrepared(order.orderId)" />
+          </td>
+          <td>
+            <input type="checkbox" [checked]="order.status === 'Completed'" [disabled]="order.status === 'Completed'"
+              (click)="$event.stopPropagation()" (change)="markCompleted(order)" />
+          </td>
+        </tr>
+
+        <tr *ngIf="expandedOrderIds.has(order.orderId)">
+          <td colspan="5" class="order-details-cell">
+            <strong>Order Items:</strong>
+            <ul class="order-items-list">
+              <li *ngFor="let item of order.orderItems">
+                {{ item.menuItemName }} × {{ item.quantity }}
+                <span *ngIf="item.specialInstructions"> — {{ item.specialInstructions }}</span>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </ng-container>
     </tbody>
   </table>
 </section>

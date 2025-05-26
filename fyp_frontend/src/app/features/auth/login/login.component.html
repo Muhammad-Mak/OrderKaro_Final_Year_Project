@@ -27,7 +27,7 @@
               <small *ngIf="form.controls['password'].invalid && form.controls['password'].touched"
                 class="text-danger">* Password is required</small>
 
-             
+
 
               <button type="submit" class="btn btn-block mt-4 w-100">Login</button>
 
@@ -37,6 +37,8 @@
               </div>
 
             </form>
+            <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+            <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
           </div>
         </div>
       </div>

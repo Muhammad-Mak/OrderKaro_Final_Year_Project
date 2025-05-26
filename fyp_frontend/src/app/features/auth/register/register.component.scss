@@ -68,3 +68,19 @@ input[type="password"] {
   text-decoration: underline;
   color: #ff1e00;
 }
+.alert {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #256029;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #842029;
+}

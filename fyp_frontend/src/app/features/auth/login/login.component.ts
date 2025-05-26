@@ -13,7 +13,8 @@ import { CommonModule } from '@angular/common';
 })
 export class LoginComponent {
   form: FormGroup;
-  error: string = '';
+  successMessage: string = '';
+  errorMessage: string = '';
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({
@@ -30,21 +31,27 @@ export class LoginComponent {
     this.auth.login(credentials).subscribe({
       next: (res) => {
         if (res.user.role === 'Customer') {
-          this.error = 'Only Admins and Staff can log in.';
+          this.successMessage = '';
+          this.errorMessage = 'Only Admins and Staff can log in.';
           return;
         }
 
         this.auth.saveAuthData(res.token, res.user);
+        this.successMessage = '✅ Login Successful!';
+        this.errorMessage = '';
 
-        if (res.user.role === 'Admin') {
-          this.router.navigate(['/dashboard/analytics']);
-        } else if (res.user.role === 'Staff') {
-          this.router.navigate(['/orders/active']); // Or whichever staff route you allow
-        }
-
+        setTimeout(() => {
+          const role = res.user.role;
+          if (role === 'Admin') {
+            this.router.navigate(['/dashboard/analytics']);
+          } else {
+            this.router.navigate(['/orders/active']);
+          }
+        }, 1000);
       },
       error: () => {
-        this.error = 'Invalid email or password.';
+        this.successMessage = '';
+        this.errorMessage = '❌ Invalid email or password.';
       }
     });
   }
@@ -52,5 +59,4 @@ export class LoginComponent {
   goToRegister() {
     this.router.navigate(['/register']);
   }
-
 }

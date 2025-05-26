@@ -51,5 +51,15 @@ export class ActiveOrdersComponent implements OnInit {
       order.status.toLowerCase().includes(query)
     );
   }
+  expandedOrderIds: Set<number> = new Set();
+
+  toggleExpand(orderId: number) {
+    if (this.expandedOrderIds.has(orderId)) {
+      this.expandedOrderIds.delete(orderId);
+    } else {
+      this.expandedOrderIds.add(orderId);
+    }
+  }
+
 
 }

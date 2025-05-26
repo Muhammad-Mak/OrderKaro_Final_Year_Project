@@ -66,8 +66,9 @@
                 Already Have An Account?
                 <button class="btn-link" (click)="goToLogin()" type="button">Login</button>
               </div>
-
             </form>
+            <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+            <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
           </div>
         </div>
       </div>

@@ -13,6 +13,8 @@ import { CommonModule } from '@angular/common';
 })
 export class RegisterComponent {
   form: FormGroup;
+  successMessage: string = '';
+  errorMessage: string = '';
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
     this.form = this.fb.group({
@@ -29,12 +31,22 @@ export class RegisterComponent {
     if (this.form.invalid) return;
 
     this.auth.register(this.form.value).subscribe({
-      next: () => this.router.navigate(['/login']),
-      error: (err) => console.error(err)
+      next: () => {
+        this.successMessage = '✅ Registration successful!';
+        this.errorMessage = '';
+        this.form.reset();
+
+        setTimeout(() => this.router.navigate(['/login']), 1500);
+      },
+      error: (err) => {
+        this.successMessage = '';
+        this.errorMessage = '❌ Registration failed. Please try again.';
+        console.error(err);
+      }
     });
   }
-  goToLogin() {
-  this.router.navigate(['/login']);
-  } 
 
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
 }
