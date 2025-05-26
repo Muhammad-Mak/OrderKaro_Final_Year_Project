@@ -1,29 +1,45 @@
-<h2>Active Orders</h2>
+<section class="active-orders">
+  <h3>Active Orders</h3>
 
-<table>
-  <thead>
-    <tr>
-      <th>Order #</th>
-      <th>User</th>
-      <th>Status</th>
-      <th>Prepared</th>
-      <th>Completed</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let order of orders">
-      <td>{{ order.orderNumber }}</td>
-      <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
-      <td>{{ order.status }}</td>
-      <td>
-        <input type="checkbox"
-               [checked]="preparedMap[order.orderId]"
-               (change)="togglePrepared(order.orderId)">
-      </td>
-      <td>
-        <input type="checkbox"
-               (change)="markCompleted(order)">
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <div class="table-search">
+    <input
+      type="text"
+      [(ngModel)]="searchOrderQuery"
+      placeholder="Search by order #, user or status..."
+    />
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Order #</th>
+        <th>User</th>
+        <th>Status</th>
+        <th>Prepared</th>
+        <th>Completed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of filteredOrders()">
+        <td>{{ order.orderNumber }}</td>
+        <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
+        <td>{{ order.status }}</td>
+        <td>
+          <input
+            type="checkbox"
+            [checked]="preparedMap[order.orderId]"
+            (change)="togglePrepared(order.orderId)"
+          />
+        </td>
+        <td>
+          <input
+            type="checkbox"
+            [checked]="order.status === 'Completed'"
+            [disabled]="order.status === 'Completed'"
+            (change)="markCompleted(order)"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

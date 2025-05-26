@@ -8,6 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartConfiguration } from 'chart.js';
+import { getOrdinalDate } from '../../../utils/date-utils';
 
 @Component({
   selector: 'app-analytics',
@@ -68,6 +69,9 @@ export class AnalyticsComponent implements OnInit {
     this.loadUsers();
     this.loadAllOrders();
   }
+  searchUserQuery: string = '';
+  searchOrderQuery: string = '';
+
 
   loadAnalytics() {
     this.analyticsService.getTotals().subscribe(res => {
@@ -94,7 +98,7 @@ export class AnalyticsComponent implements OnInit {
 
     this.analyticsService.getOrdersPerWeek().subscribe(res => {
       this.ordersWeekData = {
-        labels: res.map((r: any) => r.date),
+        labels: res.map((r: any) => getOrdinalDate(r.date)),
         datasets: [{
           data: res.map((r: any) => r.count),
           label: 'Orders',
@@ -130,11 +134,18 @@ export class AnalyticsComponent implements OnInit {
   }
 
   selectUser(user: any) {
-    this.selectedUser = user;
-    this.orderService.getOrdersByUser(user.userId).subscribe(res => {
-      this.userOrders = res;
-    });
+  if (this.selectedUser?.userId === user.userId) {
+    this.selectedUser = null;       // clicking again closes
+    this.userOrders = [];
+    return;
   }
+
+  this.selectedUser = user;
+  this.orderService.getOrdersByUser(user.userId).subscribe(res => {
+    this.userOrders = res;
+  });
+}
+
 
   edit(user: any) {
     this.editUser = { ...user };
@@ -169,4 +180,22 @@ export class AnalyticsComponent implements OnInit {
       }
     });
   }
+  filteredUsers(): any[] {
+    const query = this.searchUserQuery.toLowerCase();
+    return this.users.filter(user =>
+      `${user.firstName} ${user.lastName}`.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query) ||
+      user.role.toLowerCase().includes(query)
+    );
+  }
+
+  filteredOrders(): any[] {
+    const query = this.searchOrderQuery.toLowerCase();
+    return this.allOrders.filter(order =>
+      order.orderNumber.toLowerCase().includes(query) ||
+      `${order.firstName ?? ''} ${order.lastName ?? ''}`.toLowerCase().includes(query) ||
+      order.status.toLowerCase().includes(query)
+    );
+  }
+
 }

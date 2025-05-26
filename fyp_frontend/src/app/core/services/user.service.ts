@@ -15,11 +15,12 @@ export class UserService {
   }
 
   topUpBalance(studentId: string, amount: number) {
-    return this.http.post<{ balance: number }>(
-      `/api/users/topup?studentId=${studentId}&amount=${amount}`,
-      {}
-    );
-  }
+  return this.http.post<{ balance: number }>(
+    `${appSettings.apiBaseUrl}/users/topup?studentId=${studentId}&amount=${amount}`,
+    {} 
+  );
+}
+
 
   updateUser(userId: number, data: any) {
     return this.http.put(`${appSettings.apiBaseUrl}/users/${userId}`, data);

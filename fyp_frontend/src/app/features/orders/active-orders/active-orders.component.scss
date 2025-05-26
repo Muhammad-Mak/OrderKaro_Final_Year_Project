@@ -1,19 +1,44 @@
+section.active-orders {
+  background: white;
+  padding: 1rem;
+  margin-top: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.table-search {
+  margin-bottom: 1rem;
+
+  input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
+  margin: 0;
+  border-radius: 8px;
+  overflow: hidden;
 
   th, td {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    text-align: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+    font-size: 0.95rem;
   }
 
   th {
-    background-color: #eee;
+    background-color: #f8f9fa;
+    font-weight: 600;
   }
-  .snack-success {
-  background-color: #4caf50;
-  color: white;
-}
 
+  tr:last-child td {
+    border-bottom: none;
+  }
 }

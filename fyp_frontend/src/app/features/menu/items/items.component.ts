@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MenuService } from '../../../core/services/menu.service';
 import { CategoryService } from '../../../core/services/category.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-items',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './items.component.html',
   styleUrls: ['./items.component.scss']
 })
@@ -70,4 +71,14 @@ export class ItemsComponent implements OnInit {
     this.editingId = null;
     this.form.reset();
   }
+  searchQuery: string = '';
+
+filteredItems(): any[] {
+  const q = this.searchQuery.toLowerCase();
+  return this.items.filter(i =>
+    i.name.toLowerCase().includes(q) ||
+    i.description.toLowerCase().includes(q) ||
+    i.categoryName.toLowerCase().includes(q)
+  );
+}
 }

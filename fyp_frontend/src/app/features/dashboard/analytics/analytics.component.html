@@ -20,10 +20,7 @@
 <section class="graph-section">
   <div class="card graph-card">
     <h3>Orders This Week</h3>
-    <canvas baseChart
-      [data]="ordersWeekData"
-      [options]="lineChartOptions"
-      [type]="'line'">
+    <canvas baseChart [data]="ordersWeekData" [options]="lineChartOptions" [type]="'line'">
     </canvas>
   </div>
 </section>
@@ -32,18 +29,12 @@
 <section class="side-by-side-charts">
   <div class="card side-chart">
     <h3>Top 6 Ordered Items</h3>
-    <canvas baseChart
-      [data]="topItemsData"
-      [options]="barChartOptions"
-      [type]="'bar'">
+    <canvas baseChart [data]="topItemsData" [options]="barChartOptions" [type]="'bar'">
     </canvas>
   </div>
   <div class="card side-chart">
     <h3>Pickup vs Delivery</h3>
-    <canvas baseChart
-      [data]="orderTypeData"
-      [options]="pieChartOptions"
-      [type]="'pie'">
+    <canvas baseChart [data]="orderTypeData" [options]="pieChartOptions" [type]="'pie'">
     </canvas>
   </div>
 </section>
@@ -51,12 +42,20 @@
 <!-- USERS TABLE -->
 <section class="users">
   <h3>Users</h3>
+  <div class="table-search">
+    <input type="text" [(ngModel)]="searchUserQuery" placeholder="Search users by name, email, or role..." />
+  </div>
   <table>
     <thead>
-      <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of users">
+      <tr *ngFor="let user of filteredUsers()">
         <td>
           <div *ngIf="editUser?.userId !== user.userId">{{ user.firstName }} {{ user.lastName }}</div>
           <div *ngIf="editUser?.userId === user.userId">
@@ -77,15 +76,17 @@
         </td>
         <td>
           <div *ngIf="editUser?.userId !== user.userId">
-            <button (click)="selectUser(user)">View Orders</button>
-            <button (click)="edit(user)">Edit</button>
-            <button (click)="confirmDelete(user)">Delete</button>
+            <button class="view" (click)="selectUser(user)">View Orders</button>
+            <button class="edit" (click)="edit(user)">Edit</button>
+            <button class="delete" (click)="confirmDelete(user)">Delete</button>
           </div>
           <div *ngIf="editUser?.userId === user.userId">
-            <button (click)="saveEdit()">Save</button>
-            <button (click)="cancelEdit()">Cancel</button>
+            <button class="view" (click)="saveEdit()">Save</button> <!-- stays blue -->
+            <button class="cancel" (click)="cancelEdit()">Cancel</button> <!-- stays red -->
           </div>
         </td>
+
+
       </tr>
     </tbody>
   </table>
@@ -93,10 +94,18 @@
 
 <!-- USER ORDERS -->
 <section *ngIf="selectedUser">
-  <h4>Orders by {{ selectedUser.firstName }}</h4>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h4>Orders by {{ selectedUser.firstName }}</h4>
+    <button (click)="selectedUser = null"
+      style="font-weight: bold; border: none; background: transparent; cursor: pointer; color: #f44336;">✕</button>
+  </div>
   <table>
     <thead>
-      <tr><th>Order #</th><th>Status</th><th>Total</th></tr>
+      <tr>
+        <th>Order #</th>
+        <th>Status</th>
+        <th>Total</th>
+      </tr>
     </thead>
     <tbody>
       <tr *ngFor="let order of userOrders">
@@ -111,12 +120,20 @@
 <!-- ALL ORDERS -->
 <section class="all-orders">
   <h3>All Orders</h3>
+  <div class="table-search">
+    <input type="text" [(ngModel)]="searchOrderQuery" placeholder="Search orders by order #, name or status..." />
+  </div>
   <table>
     <thead>
-      <tr><th>Order #</th><th>User</th><th>Status</th><th>Total</th></tr>
+      <tr>
+        <th>Order #</th>
+        <th>User</th>
+        <th>Status</th>
+        <th>Total</th>
+      </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order of allOrders">
+      <tr *ngFor="let order of filteredOrders()">
         <td>{{ order.orderNumber }}</td>
         <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
         <td>{{ order.status }}</td>

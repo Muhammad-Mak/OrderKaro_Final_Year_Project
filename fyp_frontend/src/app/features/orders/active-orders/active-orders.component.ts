@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { OrderService } from '../../../core/services/order.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-active-orders',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, MatSnackBarModule, FormsModule],
   templateUrl: './active-orders.component.html',
   styleUrls: ['./active-orders.component.scss']
 })
@@ -40,4 +41,15 @@ export class ActiveOrdersComponent implements OnInit {
       });
     });
   }
+  searchOrderQuery: string = '';
+
+  filteredOrders(): any[] {
+    const query = this.searchOrderQuery.toLowerCase();
+    return this.orders.filter(order =>
+      order.orderNumber.toLowerCase().includes(query) ||
+      `${order.firstName ?? ''} ${order.lastName ?? ''}`.toLowerCase().includes(query) ||
+      order.status.toLowerCase().includes(query)
+    );
+  }
+
 }

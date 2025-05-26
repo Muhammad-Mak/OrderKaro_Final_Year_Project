@@ -1,29 +1,39 @@
-<h2>Categories</h2>
+<section class="categories-section">
+  <h3>Categories</h3>
 
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <input formControlName="name" placeholder="Category Name" required>
-  <input formControlName="description" placeholder="Description">
-  <input formControlName="imageUrl" placeholder="Image URL">
-  <input formControlName="displayOrder" type="number" placeholder="Display Order">
-  <label>
-    <input type="checkbox" formControlName="isActive"> Active
-  </label>
-  <button type="submit">{{ editingId ? 'Update' : 'Add' }}</button>
-  <button type="button" (click)="cancel()" *ngIf="editingId">Cancel</button>
-</form>
+  <div class="table-search">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Search categories..."
+    />
+  </div>
 
-<table>
-  <thead>
-    <tr><th>Name</th><th>Status</th><th>Actions</th></tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let cat of categories">
-      <td>{{ cat.name }}</td>
-      <td>{{ cat.isActive ? 'Active' : 'Inactive' }}</td>
-      <td>
-        <button (click)="edit(cat)">Edit</button>
-        <button (click)="delete(cat.categoryId)">Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="category-form">
+    <input formControlName="name" placeholder="Category Name" required />
+    <input formControlName="description" placeholder="Description" />
+    <input formControlName="imageUrl" placeholder="Image URL" />
+    <input formControlName="displayOrder" type="number" placeholder="Display Order" />
+    <label>
+      <input type="checkbox" formControlName="isActive" /> Active
+    </label>
+    <button type="submit">{{ editingId ? 'Update' : 'Add' }}</button>
+    <button type="button" (click)="cancel()" *ngIf="editingId">Cancel</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cat of filteredCategories()">
+        <td>{{ cat.name }}</td>
+        <td>{{ cat.isActive ? 'Active' : 'Inactive' }}</td>
+        <td>
+          <button (click)="edit(cat)">Edit</button>
+          <button (click)="delete(cat.categoryId)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

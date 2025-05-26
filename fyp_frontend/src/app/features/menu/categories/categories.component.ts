@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CategoryService } from '../../../core/services/category.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-categories',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.scss']
 })
@@ -61,4 +62,12 @@ export class CategoriesComponent implements OnInit {
     this.editingId = null;
     this.form.reset();
   }
+  searchQuery: string = '';
+  filteredCategories(): any[] {
+  const q = this.searchQuery.toLowerCase();
+  return this.categories.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.description?.toLowerCase().includes(q)
+  );
+}
 }
