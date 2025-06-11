@@ -81,7 +81,7 @@ namespace FYP_Backend.Controllers
         }
 
       
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("sales-history")]
         public async Task<IActionResult> GetSalesHistory()
         {
