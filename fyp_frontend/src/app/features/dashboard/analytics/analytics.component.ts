@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartConfiguration } from 'chart.js';
 import { getOrdinalDate } from '../../../utils/date-utils';
+import { MenuService } from '../../../core/services/menu.service';
+import { ForecastService } from '../../../core/services/forecast.service';
 
 @Component({
   selector: 'app-analytics',
@@ -34,10 +36,32 @@ export class AnalyticsComponent implements OnInit {
   topItemsData: ChartData<'bar'> = { labels: [], datasets: [] };
   orderTypeData: ChartData<'pie'> = { labels: ['Pickup', 'Delivery'], datasets: [] };
 
+  // Forecast Chart Data
+  forecastData: ChartData<'line'> = {
+  labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+  datasets: [{
+    label: 'Forecast',
+    data: [0, 0, 0, 0, 0, 0, 0],
+    fill: true,
+    tension: 0.4,
+    borderColor: '#ccc',
+    backgroundColor: 'rgba(200, 200, 200, 0.2)',
+  }]
+};
+  menuItems: any[] = [];
+  selectedItemId: number | null = null;
+  forecastVisible: boolean = true;
+
   // Chart Options
   lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        min: 0
+      }
+    }
   };
 
   barChartOptions: ChartConfiguration<'bar'>['options'] = {
@@ -55,7 +79,9 @@ export class AnalyticsComponent implements OnInit {
     private userService: UserService,
     private orderService: OrderService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private menuService: MenuService,
+    private forecastService: ForecastService
   ) { }
 
   ngOnInit(): void {
@@ -68,10 +94,11 @@ export class AnalyticsComponent implements OnInit {
     this.loadAnalytics();
     this.loadUsers();
     this.loadAllOrders();
+    this.loadMenuItems();
   }
+
   searchUserQuery: string = '';
   searchOrderQuery: string = '';
-
 
   loadAnalytics() {
     this.analyticsService.getTotals().subscribe(res => {
@@ -133,19 +160,43 @@ export class AnalyticsComponent implements OnInit {
     });
   }
 
-  selectUser(user: any) {
-  if (this.selectedUser?.userId === user.userId) {
-    this.selectedUser = null;       // clicking again closes
-    this.userOrders = [];
-    return;
+  loadMenuItems() {
+    this.menuService.getAllItems().subscribe((items: any[]) => {
+      this.menuItems = items;
+    });
   }
 
-  this.selectedUser = user;
-  this.orderService.getOrdersByUser(user.userId).subscribe(res => {
-    this.userOrders = res;
-  });
-}
+  loadForecast() {
+    if (!this.selectedItemId) return;
 
+    this.forecastService.getForecast(this.selectedItemId).subscribe(data => {
+      this.forecastData = {
+        labels: data.map(f => f.date),
+        datasets: [{
+          data: data.map(f => f.quantity),
+          label: 'Forecast',
+          borderColor: '#ff7043',
+          backgroundColor: 'rgba(255, 112, 67, 0.2)',
+          fill: true,
+          tension: 0.4
+        }]
+      };
+      this.forecastVisible = true;
+    });
+  }
+
+  selectUser(user: any) {
+    if (this.selectedUser?.userId === user.userId) {
+      this.selectedUser = null;
+      this.userOrders = [];
+      return;
+    }
+
+    this.selectedUser = user;
+    this.orderService.getOrdersByUser(user.userId).subscribe(res => {
+      this.userOrders = res;
+    });
+  }
 
   edit(user: any) {
     this.editUser = { ...user };
@@ -180,6 +231,7 @@ export class AnalyticsComponent implements OnInit {
       }
     });
   }
+
   filteredUsers(): any[] {
     const query = this.searchUserQuery.toLowerCase();
     return this.users.filter(user =>
@@ -197,5 +249,4 @@ export class AnalyticsComponent implements OnInit {
       order.status.toLowerCase().includes(query)
     );
   }
-
 }

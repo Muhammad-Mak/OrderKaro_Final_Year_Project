@@ -39,6 +39,35 @@
   </div>
 </section>
 
+<!-- 🔥 FORECAST SECTION -->
+<section class="graph-section mt-4">
+  <div class="card graph-card">
+    <h3>Forecast Sales (Next 7 Days)</h3>
+
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <label for="menuItemSelect" class="form-label m-0">Select Item:</label>
+      <select
+        id="menuItemSelect"
+        class="form-select w-auto"
+        [(ngModel)]="selectedItemId"
+      >
+        <option [value]="null" disabled selected>Select menu item</option>
+        <option *ngFor="let item of menuItems" [value]="item.menuItemId">
+          {{ item.name }}
+        </option>
+      </select>
+      <button class="btn btn-primary" (click)="loadForecast()" [disabled]="!selectedItemId">
+        Get Forecast
+      </button>
+    </div>
+
+    <div *ngIf="forecastVisible">
+      <canvas baseChart [data]="forecastData" [options]="lineChartOptions" [type]="'line'">
+      </canvas>
+    </div>
+  </div>
+</section>
+
 <!-- USERS TABLE -->
 <section class="users">
   <h3>Users</h3>
@@ -81,12 +110,10 @@
             <button class="delete" (click)="confirmDelete(user)">Delete</button>
           </div>
           <div *ngIf="editUser?.userId === user.userId">
-            <button class="view" (click)="saveEdit()">Save</button> <!-- stays blue -->
-            <button class="cancel" (click)="cancelEdit()">Cancel</button> <!-- stays red -->
+            <button class="view" (click)="saveEdit()">Save</button>
+            <button class="cancel" (click)="cancelEdit()">Cancel</button>
           </div>
         </td>
-
-
       </tr>
     </tbody>
   </table>

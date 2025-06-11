@@ -11,7 +11,7 @@ namespace FYP_Backend.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ForecastController> _logger;
 
-        private const string ForecastApiUrl = "http://localhost:8000/forecast"; // Change to your hosted FastAPI URL if deployed
+        private const string ForecastApiUrl = "https://smartcafeforecast.onrender.com/forecast"; // Change to your hosted FastAPI URL if deployed
 
         public ForecastController(IHttpClientFactory httpClientFactory, ILogger<ForecastController> logger)
         {
@@ -19,7 +19,6 @@ namespace FYP_Backend.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("sales")]
         public async Task<IActionResult> GetForecast(int itemId, int days = 7)
         {
@@ -29,13 +28,14 @@ namespace FYP_Backend.Controllers
 
             try
             {
-                var response = await client.GetAsync(requestUrl);
+                var response = await client.GetAsync($"{ForecastApiUrl}?item_id={itemId}&days={days}");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Forecast service returned error: {response.StatusCode}");
-                    return StatusCode((int)response.StatusCode, "Failed to get forecast.");
+                    var msg = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, $"Forecast service failed: {msg}");
                 }
+
 
                 var result = await response.Content.ReadFromJsonAsync<List<ForecastDTO>>();
                 return Ok(result);
