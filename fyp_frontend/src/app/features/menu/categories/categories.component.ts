@@ -21,7 +21,7 @@ export class CategoriesComponent implements OnInit {
       name: '',
       description: '',
       imageUrl: '',
-      displayOrder: 0,
+      displayOrder: "Display Order",
       isActive: true
     });
   }

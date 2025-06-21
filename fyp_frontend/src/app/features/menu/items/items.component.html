@@ -2,11 +2,7 @@
   <h3>Menu Items</h3>
 
   <div class="table-search">
-    <input
-      type="text"
-      [(ngModel)]="searchQuery"
-      placeholder="Search menu items..."
-    />
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search menu items..." />
   </div>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="item-form">
@@ -15,8 +11,12 @@
     <input formControlName="price" type="number" placeholder="Price" />
     <input formControlName="imageUrl" placeholder="Image URL" />
     <select formControlName="categoryId">
-      <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.name }}</option>
+      <option [ngValue]="null" disabled selected hidden>Category</option>
+      <option *ngFor="let cat of categories" [ngValue]="cat.categoryId">
+        {{ cat.name }}
+      </option>
     </select>
+
     <label>
       <input type="checkbox" formControlName="isAvailable" /> Available
     </label>
@@ -26,7 +26,12 @@
 
   <table>
     <thead>
-      <tr><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
     </thead>
     <tbody>
       <tr *ngFor="let item of filteredItems()">

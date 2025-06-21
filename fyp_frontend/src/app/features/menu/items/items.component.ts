@@ -27,7 +27,7 @@ export class ItemsComponent implements OnInit {
     this.form = this.fb.group({
       name: '',
       description: '',
-      price: 0,
+      price: "Price",
       imageUrl: '',
       isAvailable: true,
       categoryId: null

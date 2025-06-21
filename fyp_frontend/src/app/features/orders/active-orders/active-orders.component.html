@@ -33,7 +33,15 @@
 
         <tr *ngIf="expandedOrderIds.has(order.orderId)">
           <td colspan="5" class="order-details-cell">
-            <strong>Order Items:</strong>
+            <p><strong>Placed At:</strong> {{ order.orderDate | date:'dd MMM, yyyy h:mm a' }}</p>
+            <p>
+              <strong>Order Type:</strong> {{ order.orderType }}
+              <span *ngIf="order.orderType === 'Delivery'">
+                &nbsp;|&nbsp; <strong>Delivery Location:</strong> {{ order.deliveryLocation || 'N/A' }}
+              </span>
+            </p>
+
+            <p><strong>Order Items:</strong></p>
             <ul class="order-items-list">
               <li *ngFor="let item of order.orderItems">
                 {{ item.menuItemName }} × {{ item.quantity }}
@@ -42,6 +50,7 @@
             </ul>
           </td>
         </tr>
+
       </ng-container>
     </tbody>
   </table>

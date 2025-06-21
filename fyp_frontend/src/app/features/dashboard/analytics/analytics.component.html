@@ -46,11 +46,7 @@
 
     <div class="d-flex align-items-center gap-2 mb-3">
       <label for="menuItemSelect" class="form-label m-0">Select Item:</label>
-      <select
-        id="menuItemSelect"
-        class="form-select w-auto"
-        [(ngModel)]="selectedItemId"
-      >
+      <select id="menuItemSelect" class="form-select w-auto" [(ngModel)]="selectedItemId">
         <option [value]="null" disabled selected>Select menu item</option>
         <option *ngFor="let item of menuItems" [value]="item.menuItemId">
           {{ item.name }}
@@ -80,6 +76,7 @@
         <th>Name</th>
         <th>Email</th>
         <th>Role</th>
+        <th>University ID</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -104,6 +101,13 @@
           </div>
         </td>
         <td>
+          <div *ngIf="editUser?.userId !== user.userId">{{ user.studentId || 'N/A' }}</div>
+          <div *ngIf="editUser?.userId === user.userId">
+            <input [(ngModel)]="editUser.studentId" placeholder="University ID" />
+          </div>
+        </td>
+
+        <td>
           <div *ngIf="editUser?.userId !== user.userId">
             <button class="view" (click)="selectUser(user)">View Orders</button>
             <button class="edit" (click)="edit(user)">Edit</button>
@@ -123,49 +127,82 @@
 <section *ngIf="selectedUser">
   <div style="display: flex; justify-content: space-between; align-items: center;">
     <h4>Orders by {{ selectedUser.firstName }}</h4>
-    <button (click)="selectedUser = null"
-      style="font-weight: bold; border: none; background: transparent; cursor: pointer; color: #f44336;">✕</button>
+    <button (click)="selectedUser = null" style="font-weight: bold; border: none; background: transparent; cursor: pointer; color: #f44336;">✕</button>
   </div>
   <table>
     <thead>
-      <tr>
-        <th>Order #</th>
-        <th>Status</th>
-        <th>Total</th>
-      </tr>
+      <tr><th>Order #</th><th>Status</th><th>Total</th></tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order of userOrders">
-        <td>{{ order.orderNumber }}</td>
-        <td>{{ order.status }}</td>
-        <td>{{ order.totalAmount | currency:'PKR' }}</td>
-      </tr>
+      <ng-container *ngFor="let order of userOrders">
+        <tr (click)="toggleOrderExpand(order.orderId)" style="cursor: pointer;">
+          <td>{{ order.orderNumber }}</td>
+          <td>{{ order.status }}</td>
+          <td>{{ order.totalAmount | currency:'PKR' }}</td>
+        </tr>
+        <tr *ngIf="expandedOrders.has(order.orderId)">
+          <td colspan="3" class="order-details-cell">
+            <p><strong>Placed At:</strong> {{ order.orderDate | date:'dd MMM, yyyy hh:mm a' }}</p>
+            <p><strong>Order Type:</strong> {{ order.orderType }}
+              <span *ngIf="order.orderType === 'Delivery'">
+                &nbsp;|&nbsp; <strong>Delivery Location:</strong> {{ order.deliveryLocation || 'N/A' }}
+              </span>
+            </p>
+            <p><strong>Order Items:</strong></p>
+            <ul>
+              <li *ngFor="let item of order.orderItems">
+                {{ item.menuItemName }} × {{ item.quantity }}
+                <span *ngIf="item.specialInstructions"> — {{ item.specialInstructions }}</span>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </ng-container>
     </tbody>
   </table>
 </section>
+
 
 <!-- ALL ORDERS -->
 <section class="all-orders">
   <h3>All Orders</h3>
   <div class="table-search">
-    <input type="text" [(ngModel)]="searchOrderQuery" placeholder="Search orders by order #, name or status..." />
+    <input
+      type="text"
+      [(ngModel)]="searchOrderQuery"
+      placeholder="Search orders by order #, name or status..."
+    />
   </div>
   <table>
     <thead>
-      <tr>
-        <th>Order #</th>
-        <th>User</th>
-        <th>Status</th>
-        <th>Total</th>
-      </tr>
+      <tr><th>Order #</th><th>User</th><th>Status</th><th>Total</th></tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order of filteredOrders()">
-        <td>{{ order.orderNumber }}</td>
-        <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
-        <td>{{ order.status }}</td>
-        <td>{{ order.totalAmount | currency:'PKR' }}</td>
-      </tr>
+      <ng-container *ngFor="let order of filteredOrders()">
+        <tr (click)="toggleOrderExpand(order.orderId)" style="cursor: pointer;">
+          <td>{{ order.orderNumber }}</td>
+          <td>{{ order.firstName ?? 'N/A' }} {{ order.lastName ?? '' }}</td>
+          <td>{{ order.status }}</td>
+          <td>{{ order.totalAmount | currency:'PKR' }}</td>
+        </tr>
+        <tr *ngIf="expandedOrders.has(order.orderId)">
+          <td colspan="4" class="order-details-cell">
+            <p><strong>Placed At:</strong> {{ order.orderDate | date:'dd MMM, yyyy hh:mm a' }}</p>
+            <p><strong>Order Type:</strong> {{ order.orderType }}
+              <span *ngIf="order.orderType === 'Delivery'">
+                &nbsp;|&nbsp; <strong>Delivery Location:</strong> {{ order.deliveryLocation || 'N/A' }}
+              </span>
+            </p>
+            <p><strong>Order Items:</strong></p>
+            <ul>
+              <li *ngFor="let item of order.orderItems">
+                {{ item.menuItemName }} × {{ item.quantity }}
+                <span *ngIf="item.specialInstructions"> — {{ item.specialInstructions }}</span>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </ng-container>
     </tbody>
   </table>
 </section>

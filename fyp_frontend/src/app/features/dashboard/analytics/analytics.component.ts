@@ -38,16 +38,16 @@ export class AnalyticsComponent implements OnInit {
 
   // Forecast Chart Data
   forecastData: ChartData<'line'> = {
-  labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
-  datasets: [{
-    label: 'Forecast',
-    data: [0, 0, 0, 0, 0, 0, 0],
-    fill: true,
-    tension: 0.4,
-    borderColor: '#ccc',
-    backgroundColor: 'rgba(200, 200, 200, 0.2)',
-  }]
-};
+    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+    datasets: [{
+      label: 'Forecast',
+      data: [0, 0, 0, 0, 0, 0, 0],
+      fill: true,
+      tension: 0.4,
+      borderColor: '#ccc',
+      backgroundColor: 'rgba(200, 200, 200, 0.2)',
+    }]
+  };
   menuItems: any[] = [];
   selectedItemId: number | null = null;
   forecastVisible: boolean = true;
@@ -249,4 +249,14 @@ export class AnalyticsComponent implements OnInit {
       order.status.toLowerCase().includes(query)
     );
   }
+  expandedOrders: Set<number> = new Set();
+
+  toggleOrderExpand(orderId: number) {
+    if (this.expandedOrders.has(orderId)) {
+      this.expandedOrders.delete(orderId);
+    } else {
+      this.expandedOrders.add(orderId);
+    }
+  }
+
 }
