@@ -34,6 +34,10 @@
         <tr *ngIf="expandedOrderIds.has(order.orderId)">
           <td colspan="5" class="order-details-cell">
             <p><strong>Placed At:</strong> {{ order.orderDate | date:'dd MMM, yyyy h:mm a' }}</p>
+            <p *ngIf="order.scheduledTime && (order.scheduledTime !== order.orderDate)">
+              <strong>Scheduled For:</strong> {{ order.scheduledTime | date:'dd MMM, yyyy h:mm a':'Asia/Karachi' }}
+            </p>
+
             <p>
               <strong>Order Type:</strong> {{ order.orderType }}
               <span *ngIf="order.orderType === 'Delivery'">
