@@ -1,6 +1,10 @@
+<!-- analytics.component.html -->
+<!-- This is the admin dashboard UI for visualizing stats, managing users,
+     viewing orders, and generating forecasts. -->
+
 <h2>Dashboard Analytics</h2>
 
-<!-- TOP CARDS -->
+<!-- TOP METRICS -->
 <section class="stats-row">
   <div class="card metric-card">
     <h3>Total Users</h3>
@@ -16,34 +20,32 @@
   </div>
 </section>
 
-<!-- ORDERS THIS WEEK GRAPH -->
+<!-- LINE CHART: Orders over the past week -->
 <section class="graph-section">
   <div class="card graph-card">
     <h3>Orders This Week</h3>
-    <canvas baseChart [data]="ordersWeekData" [options]="lineChartOptions" [type]="'line'">
-    </canvas>
+    <canvas baseChart [data]="ordersWeekData" [options]="lineChartOptions" [type]="'line'"></canvas>
   </div>
 </section>
 
-<!-- BAR & PIE SIDE BY SIDE -->
+<!-- BAR + PIE CHARTS: Top items & Pickup/Delivery breakdown -->
 <section class="side-by-side-charts">
   <div class="card side-chart">
     <h3>Top 6 Ordered Items</h3>
-    <canvas baseChart [data]="topItemsData" [options]="barChartOptions" [type]="'bar'">
-    </canvas>
+    <canvas baseChart [data]="topItemsData" [options]="barChartOptions" [type]="'bar'"></canvas>
   </div>
   <div class="card side-chart">
     <h3>Pickup vs Delivery</h3>
-    <canvas baseChart [data]="orderTypeData" [options]="pieChartOptions" [type]="'pie'">
-    </canvas>
+    <canvas baseChart [data]="orderTypeData" [options]="pieChartOptions" [type]="'pie'"></canvas>
   </div>
 </section>
 
-<!-- 🔥 FORECAST SECTION -->
+<!-- FORECAST CHART -->
 <section class="graph-section mt-4">
   <div class="card graph-card">
     <h3>Forecast Sales (Next 7 Days)</h3>
 
+    <!-- Menu item selector to trigger forecast -->
     <div class="d-flex align-items-center gap-2 mb-3">
       <label for="menuItemSelect" class="form-label m-0">Select Item:</label>
       <select id="menuItemSelect" class="form-select w-auto" [(ngModel)]="selectedItemId">
@@ -57,19 +59,22 @@
       </button>
     </div>
 
+    <!-- Forecast chart (shown after fetching) -->
     <div *ngIf="forecastVisible">
-      <canvas baseChart [data]="forecastData" [options]="lineChartOptions" [type]="'line'">
-      </canvas>
+      <canvas baseChart [data]="forecastData" [options]="lineChartOptions" [type]="'line'"></canvas>
     </div>
   </div>
 </section>
 
-<!-- USERS TABLE -->
+<!-- USERS TABLE with inline editing -->
 <section class="users">
   <h3>Users</h3>
+
+  <!-- Search input -->
   <div class="table-search">
     <input type="text" [(ngModel)]="searchUserQuery" placeholder="Search users by name, email, or role..." />
   </div>
+
   <table>
     <thead>
       <tr>
@@ -82,6 +87,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let user of filteredUsers()">
+        <!-- Name: Static or editable -->
         <td>
           <div *ngIf="editUser?.userId !== user.userId">{{ user.firstName }} {{ user.lastName }}</div>
           <div *ngIf="editUser?.userId === user.userId">
@@ -89,7 +95,11 @@
             <input [(ngModel)]="editUser.lastName" placeholder="Last" />
           </div>
         </td>
+
+        <!-- Email -->
         <td>{{ user.email }}</td>
+
+        <!-- Role: Static or editable dropdown -->
         <td>
           <div *ngIf="editUser?.userId !== user.userId">{{ user.role }}</div>
           <div *ngIf="editUser?.userId === user.userId">
@@ -100,6 +110,8 @@
             </select>
           </div>
         </td>
+
+        <!-- University ID: Static or editable -->
         <td>
           <div *ngIf="editUser?.userId !== user.userId">{{ user.studentId || 'N/A' }}</div>
           <div *ngIf="editUser?.userId === user.userId">
@@ -107,6 +119,7 @@
           </div>
         </td>
 
+        <!-- Actions: View orders, Edit, Delete OR Save/Cancel -->
         <td>
           <div *ngIf="editUser?.userId !== user.userId">
             <button class="view" (click)="selectUser(user)">View Orders</button>
@@ -123,12 +136,14 @@
   </table>
 </section>
 
-<!-- USER ORDERS -->
+<!-- SELECTED USER ORDERS -->
 <section *ngIf="selectedUser">
   <div style="display: flex; justify-content: space-between; align-items: center;">
     <h4>Orders by {{ selectedUser.firstName }}</h4>
     <button (click)="selectedUser = null" style="font-weight: bold; border: none; background: transparent; cursor: pointer; color: #f44336;">✕</button>
   </div>
+
+  <!-- Table of selected user's orders -->
   <table>
     <thead>
       <tr><th>Order #</th><th>Status</th><th>Total</th></tr>
@@ -162,10 +177,11 @@
   </table>
 </section>
 
-
-<!-- ALL ORDERS -->
+<!-- ALL ORDERS TABLE -->
 <section class="all-orders">
   <h3>All Orders</h3>
+
+  <!-- Search bar -->
   <div class="table-search">
     <input
       type="text"
@@ -173,6 +189,7 @@
       placeholder="Search orders by order #, name or status..."
     />
   </div>
+
   <table>
     <thead>
       <tr><th>Order #</th><th>User</th><th>Status</th><th>Total</th></tr>

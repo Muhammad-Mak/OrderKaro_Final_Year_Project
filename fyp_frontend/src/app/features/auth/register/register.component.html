@@ -1,13 +1,25 @@
+<!-- register.component.html -->
+<!-- This template renders the user registration form.
+     It uses reactive forms with validations, error messages, success/error feedback,
+     and navigation to the login page. -->
+
 <div class="outer">
   <div class="container">
     <div class="row">
+      <!-- Centers the form on the page -->
       <div class="offset-md-2 col-lg-5 col-md-7 offset-lg-4 offset-md-3">
         <div class="panel border bg-white">
+          <!-- Panel Header -->
           <div class="panel-heading">
             <h3 class="pt-3 font-weight-bold">Register</h3>
           </div>
+
+          <!-- Panel Body with Form -->
           <div class="panel-body p-3">
+            <!-- Reactive form binding -->
             <form [formGroup]="form" (ngSubmit)="submit()">
+              
+              <!-- First Name -->
               <div class="form-group pt-3">
                 <div class="input-field">
                   <span class="fa fa-user p-2"></span>
@@ -15,8 +27,9 @@
                 </div>
               </div>
               <small *ngIf="form.controls['firstName'].invalid && form.controls['firstName'].touched"
-                class="text-danger">* First name is required</small>
+                     class="text-danger">* First name is required</small>
 
+              <!-- Last Name -->
               <div class="form-group pt-3">
                 <div class="input-field">
                   <span class="fa fa-user p-2"></span>
@@ -24,8 +37,9 @@
                 </div>
               </div>
               <small *ngIf="form.controls['lastName'].invalid && form.controls['lastName'].touched"
-                class="text-danger">* Last name is required</small>
+                     class="text-danger">* Last name is required</small>
 
+              <!-- Phone Number -->
               <div class="form-group pt-3">
                 <div class="input-field">
                   <span class="fa fa-phone p-2"></span>
@@ -33,17 +47,19 @@
                 </div>
               </div>
               <small *ngIf="form.controls['phoneNumber'].invalid && form.controls['phoneNumber'].touched"
-                class="text-danger">* Phone number is required</small>
+                     class="text-danger">* Phone number is required</small>
 
+              <!-- Email -->
               <div class="form-group pt-3">
                 <div class="input-field">
                   <span class="fa fa-envelope p-2"></span>
                   <input type="email" formControlName="email" placeholder="Email" />
                 </div>
               </div>
-              <small *ngIf="form.controls['email'].invalid && form.controls['email'].touched" class="text-danger">*
-                Email is required</small>
+              <small *ngIf="form.controls['email'].invalid && form.controls['email'].touched"
+                     class="text-danger">* Email is required</small>
 
+              <!-- Password -->
               <div class="form-group pt-3">
                 <div class="input-field">
                   <span class="fa fa-lock p-2"></span>
@@ -51,22 +67,27 @@
                 </div>
               </div>
               <small *ngIf="form.controls['password'].invalid && form.controls['password'].touched"
-                class="text-danger">* Password is required</small>
+                     class="text-danger">* Password is required</small>
 
+              <!-- Optional Student ID -->
               <div class="form-group pt-3">
                 <div class="input-field">
                   <span class="fa fa-id-card p-2"></span>
-                  <input type="text" formControlName="studentId" placeholder="Student ID (optional)" />
+                  <input type="text" formControlName="studentId" placeholder="University ID (optional)" />
                 </div>
               </div>
 
+              <!-- Submit Button -->
               <button type="submit" class="btn btn-block mt-4 w-100">Register</button>
 
+              <!-- Login Redirect -->
               <div class="text-center pt-4 text-muted">
                 Already Have An Account?
                 <button class="btn-link" (click)="goToLogin()" type="button">Login</button>
               </div>
             </form>
+
+            <!-- Success & Error Alerts -->
             <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
             <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
           </div>

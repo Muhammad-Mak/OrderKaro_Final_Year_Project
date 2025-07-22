@@ -1,26 +1,30 @@
+// top-up-form.component.scss
+// This stylesheet defines the visual styling for the TopUpFormComponent.
+// It applies layout, form control styling, button design, and message feedback colors.
+
 section.top-up-form {
-  background: white;
-  padding: 1.5rem;
-  margin-top: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  max-width: 400px;
+  background: white;                  // White background for the form container
+  padding: 1.5rem;                    // Internal spacing
+  margin-top: 2rem;                  // Spacing from top
+  border-radius: 8px;                // Rounded corners
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); // Light shadow for elevation effect
+  max-width: 400px;                  // Restricts width to keep form compact
 }
 
 form.topup-form {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  flex-direction: column;            // Stack form controls vertically
+  gap: 1rem;                         // Spacing between fields
 
   input {
     padding: 0.6rem;
     font-size: 0.95rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    border: 1px solid #ccc;          // Light grey border
+    border-radius: 6px;              // Rounded input corners
   }
 
   button {
-    background-color: #1e88e5;
+    background-color: #1e88e5;       // Primary blue color
     color: white;
     border: none;
     border-radius: 6px;
@@ -31,21 +35,22 @@ form.topup-form {
     transition: background-color 0.2s ease-in-out;
 
     &:hover {
-      background-color: #1e88e5e7;
+      background-color: #1e88e5e7;   // Slightly darker on hover
     }
   }
 }
 
+// Feedback messages (success or error)
 .message {
   margin-top: 1rem;
   font-weight: 500;
   padding: 0.5rem;
 
   &.success {
-    color: #2e7d32;
+    color: #2e7d32;                  // Green text for success message
   }
 
   &.error {
-    color: #d32f2f;
+    color: #d32f2f;                  // Red text for error message
   }
 }

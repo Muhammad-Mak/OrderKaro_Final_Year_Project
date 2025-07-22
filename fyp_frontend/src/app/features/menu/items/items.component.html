@@ -1,29 +1,50 @@
+<!-- items.component.html -->
+<!-- This template displays a searchable menu management interface.
+     It allows users to add, update, and delete menu items, and filter them by name, description, or category. -->
+
 <section class="menu-items">
   <h3>Menu Items</h3>
 
+  <!-- Search input for filtering items -->
   <div class="table-search">
-    <input type="text" [(ngModel)]="searchQuery" placeholder="Search menu items..." />
+    <input 
+      type="text" 
+      [(ngModel)]="searchQuery" 
+      placeholder="Search menu items..." 
+    />
   </div>
 
+  <!-- Reactive form for creating or editing a menu item -->
   <form [formGroup]="form" (ngSubmit)="submit()" class="item-form">
+    <!-- Basic item details -->
     <input formControlName="name" placeholder="Item Name" required />
     <input formControlName="description" placeholder="Description" />
     <input formControlName="price" type="number" placeholder="Price" />
     <input formControlName="imageUrl" placeholder="Image URL" />
+
+    <!-- Category selection dropdown -->
     <select formControlName="categoryId">
+      <!-- Placeholder option -->
       <option [ngValue]="null" disabled selected hidden>Category</option>
+      <!-- Loop over categories fetched from backend -->
       <option *ngFor="let cat of categories" [ngValue]="cat.categoryId">
         {{ cat.name }}
       </option>
     </select>
 
+    <!-- Availability checkbox -->
     <label>
       <input type="checkbox" formControlName="isAvailable" /> Available
     </label>
+
+    <!-- Submit button shows 'Add' or 'Update' based on edit state -->
     <button type="submit">{{ editingId ? 'Update' : 'Add' }}</button>
+
+    <!-- Cancel button appears only when editing -->
     <button type="button" (click)="cancel()" *ngIf="editingId">Cancel</button>
   </form>
 
+  <!-- Table displaying all (filtered) menu items -->
   <table>
     <thead>
       <tr>
@@ -36,9 +57,10 @@
     <tbody>
       <tr *ngFor="let item of filteredItems()">
         <td>{{ item.name }}</td>
-        <td>{{ item.price | currency:'PKR' }}</td>
+        <td>{{ item.price | currency:'PKR' }}</td> <!-- Currency pipe formats the price -->
         <td>{{ item.categoryName }}</td>
         <td>
+          <!-- Action buttons -->
           <button (click)="edit(item)">Edit</button>
           <button (click)="delete(item.menuItemId)">Delete</button>
         </td>

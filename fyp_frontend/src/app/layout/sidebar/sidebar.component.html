@@ -1,6 +1,12 @@
+<!-- This template defines the sidebar navigation for the application.
+     It displays menu options conditionally based on the user's role,
+     highlights the active route, and includes a logout button. -->
+ 
 <nav class="sidebar">
   <ul>
+    <!-- Show Analytics option only if the user is an Admin -->
     <li *ngIf="userRole === 'Admin'">
+      <!-- Apply 'active' class if current route matches -->
       <button
         [class.active]="isActive('/dashboard/analytics')"
         (click)="navigateTo('/dashboard/analytics')"

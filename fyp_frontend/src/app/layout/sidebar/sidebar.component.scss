@@ -1,14 +1,18 @@
+// sidebar.component.scss
+// Styles for the SidebarComponent. This defines the layout and behavior of the vertical sidebar,
+// including navigation buttons, active state highlighting, and logout button styling.
+
 .sidebar {
-  background-color: #2e3b4e;
-  color: white;
-  height: 100vh;
-  width: 190px;
+  background-color: #2e3b4e; // Dark sidebar background
+  color: white;              // Text color
+  height: 100vh;             // Full vertical height of viewport
+  width: 190px;              // Fixed width for the sidebar
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: column;    // Vertical layout
+  justify-content: space-between; // Pushes logout button to the bottom
 
   ul {
-    list-style: none;
+    list-style: none; // Removes bullet points from list
     margin: 0;
     padding: 0;
 
@@ -16,9 +20,9 @@
       margin: 0;
 
       button {
-        all: unset;
+        all: unset; // Removes all default browser button styles
         box-sizing: border-box;
-        width: 100%;
+        width: 100%; // Full-width clickable button
         padding: 1rem;
         font-size: 0.95rem;
         font-weight: 500;
@@ -26,21 +30,21 @@
         color: white;
         cursor: pointer;
         background-color: transparent;
-        transition: background-color 0.2s ease;
+        transition: background-color 0.2s ease; // Smooth hover effect
 
         &:hover {
-          background-color: #1e88e5;
+          background-color: #1e88e5; // Highlight on hover
         }
 
         &.active {
-          background-color: #1e88e5;
+          background-color: #1e88e5; // Highlight active button (matches hover color)
         }
       }
     }
   }
 
   .logout {
-    margin-top: auto;
+    margin-top: auto; // Pushes logout button to the bottom of the sidebar
 
     button {
       all: unset;
@@ -56,7 +60,7 @@
       transition: background-color 0.2s ease;
 
       &:hover {
-        background-color: #1e88e5;
+        background-color: #1e88e5; // Same hover style as other buttons
       }
     }
   }

@@ -1,13 +1,35 @@
+<!-- top-up-form.component.html -->
+<!-- This template defines the UI for the RFID Balance Top-Up form.
+     It includes inputs for Student ID and amount, and displays success/error messages after submission. -->
+
 <section class="top-up-form">
   <h3>RFID Balance Top-Up</h3>
 
+  <!-- Reactive form bound with [formGroup] -->
   <form [formGroup]="form" (ngSubmit)="submit()" class="topup-form">
-    <input formControlName="studentId" placeholder="Student ID (from RFID scan)" required />
-    <input type="number" formControlName="amount" placeholder="Amount (PKR)" required min="1" />
+    <!-- Input for Student ID -->
+    <input 
+      formControlName="studentId" 
+      placeholder="Student ID (from RFID scan)" 
+      required 
+    />
 
+    <!-- Input for top-up amount (only positive numbers allowed) -->
+    <input 
+      type="number" 
+      formControlName="amount" 
+      placeholder="Amount (PKR)" 
+      required 
+      min="1" 
+    />
+
+    <!-- Submit button -->
     <button type="submit">Top Up</button>
   </form>
 
+  <!-- Show success message if top-up is successful -->
   <p class="message success" *ngIf="message">{{ message }}</p>
+
+  <!-- Show error message if something goes wrong -->
   <p class="message error" *ngIf="error">{{ error }}</p>
 </section>

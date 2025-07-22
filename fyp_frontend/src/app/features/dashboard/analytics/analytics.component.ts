@@ -1,3 +1,8 @@
+// analytics.component.ts
+// This component is used exclusively by Admin users to display analytics, user management,
+// order tracking, and demand forecasting using chart visualizations. It integrates data
+// from multiple services and provides inline editing and deletion features.
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,23 +25,25 @@ import { ForecastService } from '../../../core/services/forecast.service';
   styleUrls: ['./analytics.component.scss']
 })
 export class AnalyticsComponent implements OnInit {
-  totalUsers: number = 0;
-  totalOrders: number = 0;
-  totalRevenue: number = 0;
+  // Global summary data
+  totalUsers = 0;
+  totalOrders = 0;
+  totalRevenue = 0;
   topItems: any[] = [];
 
+  // User and Order management
   users: any[] = [];
   selectedUser: any = null;
   userOrders: any[] = [];
   allOrders: any[] = [];
   editUser: any = null;
 
-  // Chart Data
+  // Chart datasets
   ordersWeekData: ChartData<'line'> = { labels: [], datasets: [] };
   topItemsData: ChartData<'bar'> = { labels: [], datasets: [] };
   orderTypeData: ChartData<'pie'> = { labels: ['Pickup', 'Delivery'], datasets: [] };
 
-  // Forecast Chart Data
+  // Forecast chart data
   forecastData: ChartData<'line'> = {
     labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
     datasets: [{
@@ -50,18 +57,13 @@ export class AnalyticsComponent implements OnInit {
   };
   menuItems: any[] = [];
   selectedItemId: number | null = null;
-  forecastVisible: boolean = true;
+  forecastVisible = true;
 
-  // Chart Options
+  // Chart configurations
   lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        min: 0
-      }
-    }
+    scales: { y: { beginAtZero: true, min: 0 } }
   };
 
   barChartOptions: ChartConfiguration<'bar'>['options'] = {
@@ -82,12 +84,12 @@ export class AnalyticsComponent implements OnInit {
     private router: Router,
     private menuService: MenuService,
     private forecastService: ForecastService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const role = this.authService.getUserRole();
     if (role !== 'Admin') {
-      this.router.navigate(['/dashboard/orders']);
+      this.router.navigate(['/dashboard/orders']); // Redirect non-admins
       return;
     }
 
@@ -97,9 +99,10 @@ export class AnalyticsComponent implements OnInit {
     this.loadMenuItems();
   }
 
-  searchUserQuery: string = '';
-  searchOrderQuery: string = '';
+  searchUserQuery = '';
+  searchOrderQuery = '';
 
+  // Loads overall stats and chart data from the backend
   loadAnalytics() {
     this.analyticsService.getTotals().subscribe(res => {
       this.totalOrders = res.totalOrders;
@@ -112,7 +115,6 @@ export class AnalyticsComponent implements OnInit {
 
     this.analyticsService.getTopItems().subscribe(res => {
       this.topItems = res;
-
       this.topItemsData = {
         labels: res.map((item: any) => item.name),
         datasets: [{
@@ -166,6 +168,7 @@ export class AnalyticsComponent implements OnInit {
     });
   }
 
+  // Forecast data loading for a selected menu item
   loadForecast() {
     if (!this.selectedItemId) return;
 
@@ -185,6 +188,7 @@ export class AnalyticsComponent implements OnInit {
     });
   }
 
+  // Handles user selection for viewing individual order history
   selectUser(user: any) {
     if (this.selectedUser?.userId === user.userId) {
       this.selectedUser = null;
@@ -198,6 +202,7 @@ export class AnalyticsComponent implements OnInit {
     });
   }
 
+  // Enables editing user fields in-place
   edit(user: any) {
     this.editUser = { ...user };
   }
@@ -206,6 +211,7 @@ export class AnalyticsComponent implements OnInit {
     this.editUser = null;
   }
 
+  // Save updated user info
   saveEdit() {
     this.userService.updateUser(this.editUser.userId, this.editUser).subscribe(() => {
       const index = this.users.findIndex(u => u.userId === this.editUser.userId);
@@ -216,6 +222,7 @@ export class AnalyticsComponent implements OnInit {
     });
   }
 
+  // Prompts confirmation before deleting a user
   confirmDelete(user: any) {
     const confirmed = confirm(`Are you sure you want to delete ${user.firstName} ${user.lastName}?`);
     if (confirmed) {
@@ -232,6 +239,7 @@ export class AnalyticsComponent implements OnInit {
     });
   }
 
+  // Filter users based on query (name, email, or role)
   filteredUsers(): any[] {
     const query = this.searchUserQuery.toLowerCase();
     return this.users.filter(user =>
@@ -241,6 +249,7 @@ export class AnalyticsComponent implements OnInit {
     );
   }
 
+  // Filter all orders based on order number, name, or status
   filteredOrders(): any[] {
     const query = this.searchOrderQuery.toLowerCase();
     return this.allOrders.filter(order =>
@@ -249,6 +258,8 @@ export class AnalyticsComponent implements OnInit {
       order.status.toLowerCase().includes(query)
     );
   }
+
+  // Controls which order rows are expanded in the UI
   expandedOrders: Set<number> = new Set();
 
   toggleOrderExpand(orderId: number) {
@@ -258,5 +269,4 @@ export class AnalyticsComponent implements OnInit {
       this.expandedOrders.add(orderId);
     }
   }
-
 }

@@ -1,17 +1,21 @@
+// active-orders.component.scss
+// This stylesheet defines the layout, search box, table formatting, and expanded order item styling
+// for the ActiveOrdersComponent.
+
 section.active-orders {
-  background: white;
-  padding: 1rem;
-  margin-top: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  background: white;                   // White card-style background
+  padding: 1rem;                       // Internal spacing
+  margin-top: 2rem;                   // Space from top
+  border-radius: 8px;                 // Rounded edges
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); // Light box shadow
+  overflow: hidden;                   // Prevents visual overflow for rounded table
 }
 
 .table-search {
   margin-bottom: 1rem;
 
   input {
-    width: 100%;
+    width: 100%;                      // Full-width search bar
     padding: 0.6rem;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -21,29 +25,30 @@ section.active-orders {
 
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: collapse;          // No gaps between cells
   margin: 0;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: hidden;                   // Clips table corners for rounded border effect
 
   th, td {
     padding: 0.75rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0; // Subtle row separators
     text-align: left;
     font-size: 0.95rem;
   }
 
   th {
-    background-color: #f8f9fa;
-    font-weight: 600;
+    background-color: #f8f9fa;        // Light gray header row
+    font-weight: 600;                 // Emphasized header text
   }
 
   tr:last-child td {
-    border-bottom: none;
+    border-bottom: none;             // Removes bottom border for last row
   }
 }
+
 .order-details-cell {
-  background-color: #f9f9f9;
+  background-color: #f9f9f9;          // Light gray background for expanded order details
   padding: 0.75rem;
   font-size: 0.9rem;
   border-top: none;
@@ -53,7 +58,7 @@ table {
     margin: 0.5rem 0;
 
     li {
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.25rem;         // Small spacing between items
     }
   }
 }

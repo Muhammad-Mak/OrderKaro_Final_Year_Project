@@ -1,6 +1,11 @@
+<!-- categories.component.html -->
+<!-- This template provides a management interface for menu categories.
+     It includes search, add/update form, and a table listing all categories with action buttons. -->
+
 <section class="categories-section">
   <h3>Categories</h3>
 
+  <!-- Search input to filter categories by name or description -->
   <div class="table-search">
     <input
       type="text"
@@ -9,27 +14,40 @@
     />
   </div>
 
+  <!-- Reactive form used for creating and updating a category -->
   <form [formGroup]="form" (ngSubmit)="submit()" class="category-form">
+    <!-- Form fields bound to form controls -->
     <input formControlName="name" placeholder="Category Name" required />
     <input formControlName="description" placeholder="Description" />
     <input formControlName="imageUrl" placeholder="Image URL" />
     <input formControlName="displayOrder" type="number" placeholder="Display Order" />
+
+    <!-- Checkbox to toggle category active state -->
     <label>
       <input type="checkbox" formControlName="isActive" /> Active
     </label>
+
+    <!-- Submit and cancel buttons -->
     <button type="submit">{{ editingId ? 'Update' : 'Add' }}</button>
     <button type="button" (click)="cancel()" *ngIf="editingId">Cancel</button>
   </form>
 
+  <!-- Table listing all (filtered) categories -->
   <table>
     <thead>
-      <tr><th>Name</th><th>Status</th><th>Actions</th></tr>
+      <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
     </thead>
     <tbody>
+      <!-- Loop through filtered categories -->
       <tr *ngFor="let cat of filteredCategories()">
         <td>{{ cat.name }}</td>
         <td>{{ cat.isActive ? 'Active' : 'Inactive' }}</td>
         <td>
+          <!-- Edit and delete buttons for each category -->
           <button (click)="edit(cat)">Edit</button>
           <button (click)="delete(cat.categoryId)">Delete</button>
         </td>
