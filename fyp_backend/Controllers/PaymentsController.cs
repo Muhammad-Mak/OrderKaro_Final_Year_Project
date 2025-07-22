@@ -7,28 +7,28 @@ using Microsoft.AspNetCore.Authorization;
 namespace FYP_Backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // Route becomes: api/payments
+    [Route("api/[controller]")] // Route: api/payments
     public class PaymentsController : ControllerBase
     {
-        private readonly AppDbContext _context;           // Database context
-        private readonly IConfiguration _configuration;   // Configuration to access Stripe keys
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
         public PaymentsController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
 
-            // Set the Stripe secret key from appsettings.json
+            // Initialize Stripe using the secret key from configuration
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
         }
 
-        // POST: api/payments/create-payment-intent
-        // Creates a Stripe payment intent for a given order
+        // ---------------- CREATE STRIPE PAYMENT INTENT ----------------
+        // POST: api/payments/create-payment-intent?orderId=123
+        // Role: Customer, Staff, Admin
         [Authorize(Roles = "Customer, Staff, Admin")]
         [HttpPost("create-payment-intent")]
         public async Task<IActionResult> CreatePaymentIntent(int orderId)
         {
-            // Find the order and include order items
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
@@ -36,30 +36,27 @@ namespace FYP_Backend.Controllers
             if (order == null)
                 return NotFound("Order not found.");
 
-            // Stripe accepts amount in the smallest currency unit (e.g. paisa)
-            var amount = (int)(order.TotalAmount * 100); // e.g., 20.50 PKR becomes 2050
+            // Convert total to paisa (minor unit)
+            var amount = (int)(order.TotalAmount * 100);
 
-            // Configure Stripe payment intent options
             var options = new PaymentIntentCreateOptions
             {
                 Amount = amount,
                 Currency = "pkr",
                 Metadata = new Dictionary<string, string>
                 {
-                    { "order_id", order.OrderId.ToString() } // Optional metadata for tracking
+                    { "order_id", order.OrderId.ToString() }
                 }
             };
 
-            // Create payment intent through Stripe
             var service = new PaymentIntentService();
             var paymentIntent = await service.CreateAsync(options);
 
-            // Save the Stripe PaymentIntent ID to the order
+            // Save the intent ID to the order for later confirmation
             order.PaymentIntentId = paymentIntent.Id;
             order.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            // Return client secret and intent ID to the frontend
             return Ok(new
             {
                 clientSecret = paymentIntent.ClientSecret,
@@ -67,24 +64,22 @@ namespace FYP_Backend.Controllers
             });
         }
 
-        // POST: api/payments/confirm
-        // Confirms payment after Stripe processes it (simulated; in real life, use webhooks)
+        // ---------------- CONFIRM STRIPE PAYMENT ----------------
+        // POST: api/payments/confirm?paymentIntentId=pi_123
+        // Simulates confirmation (in production, use Stripe webhooks)
         [Authorize(Roles = "Customer, Staff, Admin")]
         [HttpPost("confirm")]
         public async Task<IActionResult> ConfirmPayment(string paymentIntentId)
         {
-            // Find order using the saved PaymentIntent ID
             var order = await _context.Orders
                 .FirstOrDefaultAsync(o => o.PaymentIntentId == paymentIntentId);
 
             if (order == null)
                 return NotFound("Order not found for this payment.");
 
-            // Simulate payment verification (use Stripe webhooks in production)
             var service = new PaymentIntentService();
             var intent = await service.GetAsync(paymentIntentId);
 
-            // Update order status based on Stripe payment status
             if (intent.Status == "succeeded")
             {
                 order.PaymentStatus = "Succeeded";
@@ -99,7 +94,6 @@ namespace FYP_Backend.Controllers
             order.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            // Return updated payment and order status
             return Ok(new
             {
                 status = order.Status,
@@ -107,13 +101,13 @@ namespace FYP_Backend.Controllers
             });
         }
 
-        // POST: api/payments/pay-with-balance
-        // Processes payment using the customer's RFID card balance
+        // ---------------- PAY USING BALANCE (RFID) ----------------
+        // POST: api/payments/pay-with-balance?orderId=123
+        // Deducts from user's balance if sufficient
         [Authorize(Roles = "Customer, Staff, Admin")]
         [HttpPost("pay-with-balance")]
         public async Task<IActionResult> PayWithBalance(int orderId)
         {
-            // Fetch the order and include the related user (for balance)
             var order = await _context.Orders
                 .Include(o => o.User)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
@@ -121,14 +115,13 @@ namespace FYP_Backend.Controllers
             if (order == null)
                 return NotFound("Order not found.");
 
-            // Check if user's balance is enough to cover the order
             if (order.User.Balance < order.TotalAmount)
             {
-                order.PaymentStatus = "Failed"; // Mark payment as failed
-                order.Status = "Cancelled"; // Mark order as cancelled
+                order.PaymentStatus = "Failed";
+                order.Status = "Cancelled";
                 return BadRequest("Insufficient balance.");
             }
-            // Deduct balance and mark order as paid
+
             order.User.Balance -= order.TotalAmount;
             order.PaymentStatus = "Succeeded";
             order.Status = "Pending";
@@ -136,7 +129,6 @@ namespace FYP_Backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Return updated order status and user's new balance
             return Ok(new
             {
                 status = order.Status,

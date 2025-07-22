@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace FYP_Backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] // Route: api/analytics
     public class AnalyticsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -16,6 +16,9 @@ namespace FYP_Backend.Controllers
             _context = context;
         }
 
+        // ---------------- TOTALS: Orders + Revenue ----------------
+        // GET: api/analytics/totals
+        // Admin-only: Returns total number of orders and revenue from completed ones
         [Authorize(Roles = "Admin")]
         [HttpGet("totals")]
         public async Task<IActionResult> GetTotals()
@@ -33,6 +36,9 @@ namespace FYP_Backend.Controllers
             });
         }
 
+        // ---------------- POPULAR ITEMS ----------------
+        // GET: api/analytics/popular-items
+        // Allows Admin, Customer, and Staff to view top 6 most ordered menu items
         [Authorize(Roles = "Admin, Customer, Staff")]
         [HttpGet("popular-items")]
         public async Task<IActionResult> GetTopOrderedItems()
@@ -46,6 +52,9 @@ namespace FYP_Backend.Controllers
             return Ok(topItems);
         }
 
+        // ---------------- ORDERS PER WEEK ----------------
+        // GET: api/analytics/orders-per-week
+        // Admin-only: Returns daily order counts over the last 7 days
         [Authorize(Roles = "Admin")]
         [HttpGet("orders-per-week")]
         public async Task<IActionResult> GetOrdersPerWeek()
@@ -66,6 +75,9 @@ namespace FYP_Backend.Controllers
             return Ok(data);
         }
 
+        // ---------------- ORDER TYPE RATIO ----------------
+        // GET: api/analytics/order-type-ratio
+        // Admin-only: Returns how many orders are Pickup vs Delivery
         [Authorize(Roles = "Admin")]
         [HttpGet("order-type-ratio")]
         public async Task<IActionResult> GetOrderTypeRatio()
@@ -80,13 +92,14 @@ namespace FYP_Backend.Controllers
             });
         }
 
-      
-        
+        // ---------------- SALES HISTORY ----------------
+        // GET: api/analytics/sales-history
+        // Public or internal use: Returns quantity sold per item per date (used for forecasting)
         [HttpGet("sales-history")]
         public async Task<IActionResult> GetSalesHistory()
         {
             var history = await _context.OrderItems
-                .Include(oi => oi.Order)
+                .Include(oi => oi.Order) // Needed to group by OrderDate
                 .GroupBy(oi => new { oi.MenuItemId, Date = oi.Order.OrderDate.Date })
                 .Select(g => new
                 {

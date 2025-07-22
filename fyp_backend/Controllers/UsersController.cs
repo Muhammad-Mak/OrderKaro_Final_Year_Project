@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Authorization;
 namespace FYP_Backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // Route becomes: api/users
+    [Route("api/[controller]")] // Base route: api/users
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context; // Database context
-        private readonly IMapper _mapper;       // AutoMapper for DTO conversion
+        private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
         public UsersController(AppDbContext context, IMapper mapper)
         {
@@ -20,30 +20,33 @@ namespace FYP_Backend.Controllers
             _mapper = mapper;
         }
 
+        // ------------------ GET ALL USERS ------------------
         // GET: api/users
-        // Retrieves all users in the system
-        [Authorize(Roles = "Admin")] // Only accessible to Admins
+        // Role: Admin only
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetAllUsers()
         {
             var users = await _context.Users.ToListAsync();
-            return Ok(_mapper.Map<List<UserDTO>>(users)); // Return mapped list of user DTOs
+            return Ok(_mapper.Map<List<UserDTO>>(users));
         }
 
-        // GET: api/users/5
-        // Retrieves a single user by ID
+        // ------------------ GET USER BY ID ------------------
+        // GET: api/users/{id}
+        // Role: Admin only
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetUserById(int id)
         {
             var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound(); // Return 404 if user not found
+            if (user == null) return NotFound();
 
             return Ok(_mapper.Map<UserDTO>(user));
         }
 
-        // PUT: api/users/5
-        // Updates an existing user with new data
+        // ------------------ UPDATE USER ------------------
+        // PUT: api/users/{id}
+        // Role: Admin only
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UpdateUserDTO dto)
@@ -51,15 +54,16 @@ namespace FYP_Backend.Controllers
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
-            _mapper.Map(dto, user); // Apply DTO fields to the user entity
+            _mapper.Map(dto, user);
             user.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync(); // Save changes to DB
-            return NoContent(); // Return 204 No Content
+            await _context.SaveChangesAsync();
+            return NoContent(); // 204 - success without return data
         }
 
-        // DELETE: api/users/5
-        // Deletes a user by ID
+        // ------------------ DELETE USER ------------------
+        // DELETE: api/users/{id}
+        // Role: Admin only
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
@@ -73,24 +77,26 @@ namespace FYP_Backend.Controllers
             return NoContent();
         }
 
-        // POST: api/users/topup
-        // Top up a user's RFID balance using their Student ID
-        [Authorize(Roles = "Admin, Staff")] // Both Admin and Staff can access this
+        // ------------------ TOP-UP BALANCE ------------------
+        // POST: api/users/topup?studentId=...&amount=...
+        // Roles: Admin, Staff
+        [Authorize(Roles = "Admin, Staff")]
         [HttpPost("topup")]
         public async Task<IActionResult> TopUpBalance(string studentId, decimal amount)
         {
-            // Find user by StudentId (unique RFID identifier)
             var user = await _context.Users.FirstOrDefaultAsync(u => u.StudentId == studentId);
             if (user == null) return NotFound("Student not found.");
 
-            user.Balance += amount;               // Add the top-up amount to user's balance
+            user.Balance += amount;
             user.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();    // Save updated balance to the database
 
-            return Ok(new { user.Balance });      // Return new balance
+            await _context.SaveChangesAsync();
+            return Ok(new { user.Balance });
         }
+
+        // ------------------ GET USER COUNT ------------------
         // GET: api/users/count
-        // Returns the total number of users
+        // Role: Admin only
         [Authorize(Roles = "Admin")]
         [HttpGet("count")]
         public async Task<IActionResult> GetUserCount()
@@ -98,6 +104,5 @@ namespace FYP_Backend.Controllers
             var totalUsers = await _context.Users.CountAsync();
             return Ok(new { totalUsers });
         }
-
     }
 }

@@ -3,7 +3,6 @@ using FYP_Backend.Context;
 using FYP_Backend.DTOs.MenuItem;
 using FYP_Backend.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,44 +22,47 @@ namespace FYP_Backend.Controllers
             _mapper = mapper;
         }
 
+        // ---------------- GET ALL ----------------
         // GET: api/menuitems
-        // Returns all menu items including their category information
+        // Returns all menu items including category info
         [Authorize(Roles = "Admin, Staff, Customer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItems()
         {
             var items = await _context.MenuItems
-                .Include(m => m.Category) // Eagerly load related category data
+                .Include(m => m.Category) // Eager-load related category
                 .ToListAsync();
 
-            var dtoList = _mapper.Map<List<MenuItemDTO>>(items); // Convert to DTOs
+            var dtoList = _mapper.Map<List<MenuItemDTO>>(items);
             return Ok(dtoList);
         }
 
-        // GET: api/menuitems/5
-        // Returns a specific menu item by ID
+        // ---------------- GET BY ID ----------------
+        // GET: api/menuitems/{id}
+        // Fetches a specific menu item with category info
         [Authorize(Roles = "Admin, Staff, Customer")]
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuItemDTO>> GetMenuItem(int id)
         {
             var item = await _context.MenuItems
-                .Include(m => m.Category) // Include category info
+                .Include(m => m.Category)
                 .FirstOrDefaultAsync(m => m.MenuItemId == id);
 
             if (item == null)
-                return NotFound(); // Return 404 if not found
+                return NotFound();
 
             var dto = _mapper.Map<MenuItemDTO>(item);
             return Ok(dto);
         }
 
+        // ---------------- CREATE ----------------
         // POST: api/menuitems
         // Creates a new menu item
         [Authorize(Roles = "Admin, Staff")]
         [HttpPost]
         public async Task<ActionResult<MenuItemDTO>> CreateMenuItem([FromBody] CreateMenuItemDTO dto)
         {
-            var menuItem = _mapper.Map<MenuItem>(dto); // Map incoming data to MenuItem model
+            var menuItem = _mapper.Map<MenuItem>(dto);
             menuItem.CreatedAt = DateTime.UtcNow;
             menuItem.UpdatedAt = DateTime.UtcNow;
 
@@ -68,12 +70,13 @@ namespace FYP_Backend.Controllers
             await _context.SaveChangesAsync();
 
             var resultDto = _mapper.Map<MenuItemDTO>(menuItem);
-            // Return 201 Created with reference to GetMenuItem route
+
             return CreatedAtAction(nameof(GetMenuItem), new { id = menuItem.MenuItemId }, resultDto);
         }
 
-        // PUT: api/menuitems/5
-        // Updates an existing menu item
+        // ---------------- UPDATE ----------------
+        // PUT: api/menuitems/{id}
+        // Updates an existing menu item by ID
         [Authorize(Roles = "Admin, Staff")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMenuItem(int id, [FromBody] UpdateMenuItemDTO dto)
@@ -82,15 +85,16 @@ namespace FYP_Backend.Controllers
             if (menuItem == null)
                 return NotFound();
 
-            _mapper.Map(dto, menuItem); // Update fields from DTO
+            _mapper.Map(dto, menuItem);
             menuItem.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            return NoContent(); // Return 204
+            return NoContent(); // 204 - success, no content returned
         }
 
-        // DELETE: api/menuitems/5
-        // Deletes a menu item by ID
+        // ---------------- DELETE ----------------
+        // DELETE: api/menuitems/{id}
+        // Deletes a menu item by its ID
         [Authorize(Roles = "Admin, Staff")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMenuItem(int id)
@@ -101,10 +105,13 @@ namespace FYP_Backend.Controllers
 
             _context.MenuItems.Remove(menuItem);
             await _context.SaveChangesAsync();
-            return NoContent(); // Return 204
+
+            return NoContent(); // 204 - deleted successfully
         }
 
+        // ---------------- GET BY CATEGORY ----------------
         // GET: api/menuitems/by-category/{categoryId}
+        // Returns all available menu items under a specific category
         [Authorize(Roles = "Admin, Staff, Customer")]
         [HttpGet("by-category/{categoryId}")]
         public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItemsByCategory(int categoryId)
@@ -116,6 +123,5 @@ namespace FYP_Backend.Controllers
 
             return Ok(_mapper.Map<List<MenuItemDTO>>(items));
         }
-
     }
 }

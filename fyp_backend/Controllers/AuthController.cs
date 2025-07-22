@@ -13,12 +13,12 @@ using System.Security.Claims;
 namespace FYP_Backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // Route becomes: api/auth
+    [Route("api/[controller]")] // Route: api/auth
     public class AuthController : ControllerBase
     {
-        private readonly AppDbContext _context;            // Database context for interacting with Users table
-        private readonly IMapper _mapper;                  // AutoMapper for converting between DTOs and models
-        private readonly IConfiguration _configuration;    // For accessing JWT settings from appsettings.json
+        private readonly AppDbContext _context;         // EF Core DB context for Users table
+        private readonly IMapper _mapper;               // AutoMapper for DTO ↔ Entity conversion
+        private readonly IConfiguration _configuration; // Used to access JWT settings
 
         public AuthController(AppDbContext context, IMapper mapper, IConfiguration configuration)
         {
@@ -27,55 +27,55 @@ namespace FYP_Backend.Controllers
             _configuration = configuration;
         }
 
+        // ------------------ REGISTER ------------------
         // POST: api/auth/register
+        // Registers a new user with role "Customer" and hashed password
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDTO dto)
         {
-            // Check if the email is already registered
+            // Check for duplicate email
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
                 return BadRequest("Email is already in use.");
 
-            // Map incoming DTO to User model
+            // Map DTO to User entity and set additional fields
             var user = _mapper.Map<User>(dto);
-            user.PasswordHash = HashPassword(dto.Password);      // Hash the password before saving
-            user.Role = "Customer";                               // Default role is Customer
+            user.PasswordHash = HashPassword(dto.Password); // Secure password hash
+            user.Role = "Customer";                         // Default user role
             user.CreatedAt = DateTime.UtcNow;
             user.UpdatedAt = DateTime.UtcNow;
 
-            // Add and save the user to the database
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Registration successful." });
         }
 
+        // ------------------ LOGIN ------------------
         // POST: api/auth/login
+        // Authenticates user and returns a JWT token + safe user data
         [HttpPost("login")]
         public async Task<ActionResult<object>> Login(LoginDTO dto)
         {
-            // Retrieve user by email
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
 
-            // Verify email and password
+            // Validate user existence and password
             if (user == null || user.PasswordHash != HashPassword(dto.Password))
                 return Unauthorized("Invalid email or password.");
 
-            // Generate JWT token for authenticated user
+            // Generate JWT and return user DTO
             var token = GenerateJwtToken(user);
-
-            // Map user to DTO to avoid returning sensitive data
             var userDto = _mapper.Map<UserDTO>(user);
 
             return Ok(new { token, user = userDto });
         }
 
-        // Generates a JWT token with user claims
+        // ------------------ JWT GENERATION ------------------
+        // Helper method to build a JWT token with claims
         private string GenerateJwtToken(User user)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!));
 
-            // Define claims: user ID, email, and role
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
@@ -83,10 +83,8 @@ namespace FYP_Backend.Controllers
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
-            // Signing credentials using HMAC SHA256 algorithm
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            // Create the JWT token with expiration and signing credentials
             var token = new JwtSecurityToken(
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
@@ -95,11 +93,11 @@ namespace FYP_Backend.Controllers
                 signingCredentials: creds
             );
 
-            // Return the generated token as a string
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        // Hashes a password using SHA-256
+        // ------------------ PASSWORD HASHING ------------------
+        // Hashes a plain text password using SHA-256
         private string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();
