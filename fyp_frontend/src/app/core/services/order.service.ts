@@ -29,4 +29,9 @@ export class OrderService {
   markAsCompleted(orderId: number) {
     return this.http.put(`${appSettings.apiBaseUrl}/orders/${orderId}/complete`, {});
   }
+
+  // PUT: Mark a specific order as prepared
+  markAsPrepared(orderId: number) {
+    return this.http.put(`${appSettings.apiBaseUrl}/orders/${orderId}/prepared`, {});
+  }
 }

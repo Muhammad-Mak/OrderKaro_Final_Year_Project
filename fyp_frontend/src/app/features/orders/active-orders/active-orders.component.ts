@@ -21,7 +21,7 @@ export class ActiveOrdersComponent implements OnInit {
   orders: any[] = [];                       // Stores all active orders fetched from the backend
   preparedMap: Record<number, boolean> = {}; // Tracks which orders are toggled as 'Prepared' (UI only)
 
-  constructor(private orderService: OrderService, private snackBar: MatSnackBar) {}
+  constructor(private orderService: OrderService, private snackBar: MatSnackBar) { }
 
   // Lifecycle hook: called once after component is initialized
   ngOnInit(): void {
@@ -35,10 +35,20 @@ export class ActiveOrdersComponent implements OnInit {
     });
   }
 
-  // Toggles "Prepared" status in UI (not persisted in backend)
-  togglePrepared(orderId: number) {
-    this.preparedMap[orderId] = !this.preparedMap[orderId];
+  // // Toggles "Prepared" status in UI (not persisted in backend)
+  // togglePrepared(orderId: number) {
+  //   this.preparedMap[orderId] = !this.preparedMap[orderId];
+  // }
+  markPrepared(order: any) {
+    this.orderService.markAsPrepared(order.orderId).subscribe(() => {
+      order.status = 'Prepared'; // update the status locally
+      this.snackBar.open('Order marked as prepared ✅', 'Close', {
+        duration: 3000,
+        panelClass: 'snack-success'
+      });
+    });
   }
+
 
   // Marks an order as completed (persists to backend and updates UI)
   markCompleted(order: any) {

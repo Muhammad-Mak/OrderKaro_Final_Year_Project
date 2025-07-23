@@ -143,7 +143,7 @@ namespace FYP_Backend.Controllers
                 .Include(o => o.User)
                 .Include(o => o.OrderItems!)
                     .ThenInclude(oi => oi.MenuItem)
-                .Where(o => o.Status == "Pending" && o.PaymentStatus == "Succeeded")
+                .Where(o => (o.Status == "Pending" ||o.Status == "Prepared") && o.PaymentStatus == "Succeeded")
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
@@ -160,7 +160,7 @@ namespace FYP_Backend.Controllers
             var order = await _context.Orders.FindAsync(id);
             if (order == null) return NotFound();
 
-            if (order.Status != "Pending" || order.PaymentStatus != "Succeeded")
+            if ((order.Status != "Pending" && order.Status != "Prepared") || order.PaymentStatus != "Succeeded")
                 return BadRequest("Only paid and pending orders can be marked as completed.");
 
             order.Status = "Completed";
@@ -168,6 +168,26 @@ namespace FYP_Backend.Controllers
 
             await _context.SaveChangesAsync();
             return Ok(new { message = "Order marked as completed." });
+        }
+
+        // ---------------- MARK ORDER AS Prepared ----------------
+        // PUT: api/orders/{id}/prepared
+        // Role: Admin, Staff
+        [Authorize(Roles = "Staff, Admin")]
+        [HttpPut("{id}/prepared")]
+        public async Task<IActionResult> MarkOrderAsPrepared(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return NotFound();
+
+            if (order.Status != "Pending" || order.PaymentStatus != "Succeeded")
+                return BadRequest("Only paid and pending orders can be marked as prepared.");
+
+            order.Status = "Prepared";
+            order.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Order marked as prepared." });
         }
     }
 }

@@ -41,9 +41,9 @@
              <!--  stop propagation Prevents triggering expand -->
             <input 
               type="checkbox" 
-              [checked]="preparedMap[order.orderId]" 
+              [checked]="order.status === 'Prepared' "
               (click)="$event.stopPropagation()"  
-              (change)="togglePrepared(order.orderId)" 
+              (change)="markPrepared(order)" 
             />
           </td>
           <td>
