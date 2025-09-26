@@ -1,5 +1,3 @@
-# fyp_code_v2
-2nd attempt
 # OrderKaro — Cafe Ordering & Forecasting System
 
 OrderKaro is a **university cafe ordering system** with integrated **sales forecasting**.  
